@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>报名名单</title>
+</head>
+<body>
+{volist name="_list" id="item"}
+{$item.stu_no},{$item.class},{$item.name},{$item.activity->name},{$item.activity->location},{$item.activity->time}<br>
+{/volist}
+</body>
+</html>

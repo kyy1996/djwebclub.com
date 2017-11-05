@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="{$Think.config.website_name}管理平台"/>
+    <meta name="author" content=""/>
+    <title>用户登录 - {$Think.config.website_name}管理平台</title>
+    {load href="__CSS__/fonts/linecons/css/linecons.css"}
+    {load href="__CSS__/fonts/fontawesome/css/font-awesome.min.css"}
+    {load href="__STATIC__/bootstrap/css/bootstrap.css"}
+    {load href="__CSS__/xenon-core.css"}
+    {load href="__CSS__/xenon-forms.css"}
+    {load href="__CSS__/xenon-components.css"}
+    {load href="__CSS__/xenon-skins.css"}
+    {load href="__CSS__/custom.css"}
+    {load href="__STATIC__/jquery/jquery-3.2.1.min.js"}
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    {load href="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"}
+    {load href="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"}
+    <![endif]-->
+    {block name="style"}{/block}
+</head>
+<body class="page-body login-page">
+<div class="login-container">
+    <div class="row">
+        <div class="col-sm-6">
+            <!-- Errors container -->
+            <div class="errors-container">
+            </div>
+            <!-- Add class "fade-in-effect" for login form effect -->
+            <form method="post" role="form" id="login" class="login-form fade-in-effect" autocomplete="off">
+                <div class="login-header">
+                    <a href="{:url('index/index/index')}" class="logo">
+                        <img src="__IMG__/logo.png" alt="" width="100"/>
+                    </a>
+                    <h3 class="text-muted">{$Think.config.website_name}管理平台</h3>
+                    <!--<p>请登录</p>-->
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="username">E-Mail/UID/手机号</label>
+                    <input type="text" class="form-control input-dark" name="username" id="username" required="required"
+                           autocomplete="nope"/>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="password">密码</label>
+                    <input type="password" class="form-control input-dark" name="password" id="password"
+                           required="required" autocomplete="nope"/>
+                </div>
+                <div class="form-group">
+                    <input type="hidden" name="callback" value="{$Request.param.callback}">
+                    <button class="btn btn-dark btn-block text-left" id="login-btn"
+                            data-loading-text="正在登录……" data-complete-text="正在跳转……">
+                        <i class="fa-lock"></i>
+                        登录
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Bottom Scripts -->
+{load href="__STATIC__/bootstrap/js/bootstrap.min.js"}
+{load href="__JS__/TweenMax.min.js"}
+{load href="__JS__/resizeable.js"}
+{load href="__JS__/joinable.js"}
+{load href="__JS__/xenon-api.js"}
+{load href="__JS__/xenon-toggles.js"}
+{load href="__JS__/jquery-validate/jquery.validate.min.js"}
+{load href="__JS__/toastr/toastr.min.js"}
+<!-- JavaScripts initializations and stuff -->
+{load href="__JS__/xenon-custom.js"}
+{load href="__STATIC__/Common/js/helper.js"}
+<script type="text/javascript">
+    jQuery(document).ready(function ($) {
+        $(".fade-in-effect").addClass('in');
+
+        $("form#login").validate({
+            messages: {
+                username: {
+                    required: '请输入用户名'
+                },
+                password: {
+                    required: '请输入密码'
+                }
+            },
+            submitHandler: function (form) {
+                var data = {
+                    username: form.username.value,
+                    password: form.password.value,
+                    callback: form.callback.value
+                };
+                $("#login-btn").button("loading");
+                helper.post("{:url('login')}", data, function (data) {
+                    helper.msg.success(data.msg, "");
+                    location.href = data.url;
+                    $("#login-btn").button("complete");
+                });
+                return false;
+            }
+        });
+        $("form#login .form-group:has(.form-control):first .form-control").focus();
+    });
+</script>
+</body>
+</html>

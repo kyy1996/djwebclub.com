@@ -1,0 +1,170 @@
+{extend name="layout"/}
+{block name="style"}
+{load href="__CSS__/contact-form.css"}
+{/block}
+{block name="body"}
+<!-- comment -->
+<section class="well-11 bg2 comments">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div>
+                    {notempty name="_list"}
+                    <ul class="media-list">
+                        {volist name="_list|list2tree=###,'id','parent_id'|tree2list" id="vo"}
+                        {notempty name="$vo.parent_id"}
+                        <li class="media response-info text-muted" data-id="{$vo.id}" style="padding-left: 4em;">
+                            <div class="clearfix">
+                                <div class="col-xs-12">
+                                    <div class="media-left text-center">
+                                        <img src="__IMG__/user.jpg">
+                                        <div class="media-info text-center" title="{$vo.nickname}">{$vo.nickname}</div>
+                                    </div>
+                                    <div class="media-body">
+                                        <div class="clearfix">
+                                            <p>{$vo.content|nl2br}</p>
+                                            <div class="text-right">
+                                                <div>{$vo.create_time}</div>
+                                                <div><a href="javascript:reply('{$vo.id}')">回复</a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        {else/}
+                        <li class="media response-info text-muted" data-id="{$vo.id}">
+                            <div class="clearfix">
+                                <div class="col-xs-12">
+                                    <div class="media-left text-center">
+                                        <img src="__IMG__/user.jpg">
+                                        <div class="media-info text-center" title="{$vo.nickname}">{$vo.nickname}</div>
+                                    </div>
+                                    <div class="media-body">
+                                        <div class="clearfix">
+                                            <p>{$vo.content|nl2br}</p>
+                                            <div class="text-right">
+                                                <div>{$vo.create_time}</div>
+                                                <div><a href="javascript:reply('{$vo.id}')">回复</a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        {/notempty}
+                        {/volist}
+                    </ul>
+                    {else/}
+                    <div>
+                        <h3>暂时还没有留言</h3>
+                    </div>
+                    {/notempty}
+                    <div class="text-center">
+                        {$_list->render()}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- //container -->
+</section>
+
+<section class="well-13 bg3 cnt-title">
+    <div class="container">
+        <h4 class="title">给我们留言</h4>
+        <p class="sub-title"></p>
+        <form id="contact-form" class="contact-form" method="post" action="{:url('save')}"
+              onsubmit="helper.form.submit();">
+            <div class="contact-form-loader"></div>
+            <fieldset>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="name">
+                            <input class="form-control" name="nickname" placeholder="昵称:" value="{$_user.name}"
+                                   required="required"/>
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="email">
+                            <input class="form-control" type="email" name="email" placeholder="E-mail:"
+                                   value="{$_user.email}" required="required"/>
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="phone">
+                            <input class="form-control" name="mobile" placeholder="手机（可选）:" value="{$_user.mobile}"/>
+                        </label>
+                    </div>
+                </div>
+                <label class="message">
+                    <textarea name="content" placeholder="内容:" required="required" minlength="5"></textarea>
+                </label>
+                <p>我们将对您的个人信息保密，不会对外展示您的个人信息</p>
+                <div class="btn-wr">
+                    {:token()}
+                    <button class="btn2"><span class="btn2_icon fa fa-commenting"></span>提交
+                    </button>
+                    <button class="btn2" type="reset"><span class="btn2_icon fa fa-repeat"></span>重置
+                    </button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</section>
+<!-- //comment -->
+<div class="modal-group">
+    <div style="display: none;" class="modal fade" id="replyCommentFormModal" tabindex="-1" role="dialog"
+         aria-labelledby="modalConfirmLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h6 class="modal-title" id="modalConfirmLabel"><strong>回复</strong></h6>
+                </div>
+                <div class="modal-body">
+                    <form action="{:url('save')}" id="replyCommentForm" method="post" onsubmit="helper.form.submit();">
+                        <input type="hidden" name="parent_id" id="parent_id" value="">
+                        <input type="hidden" name="uid" value="{$_user.uid|intval}">
+                        {:token()}
+
+                        <div class="form-group">
+                            <input class="form-control" name="nickname" id="nickname" value="{$_user.name}"
+                                   required="required" placeholder="昵称">
+                        </div>
+                        <div class="form-group">
+                            <input type="email" class="form-control" name="email" id="email" value="{$_user.email}"
+                                   required="required" placeholder="Email">
+                        </div>
+                        <div class="form-group">
+                            <input type="tel" class="form-control" name="mobile" id="mobile" value="{$_user.mobile}"
+                                   placeholder="手机（可选）">
+                        </div>
+                        <div class="form-group">
+                                <textarea class="form-control" id="content" name="content" placeholder="内容"
+                                          required="required"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">关闭
+                    </button>
+                    <button class="btn btn-primary" form="replyCommentForm">提交</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    var addCommentUrl   = "{:url('comment/save')}";
+    var replyCommentUrl = addCommentUrl;
+
+    function reply(id) {
+        $("#replyCommentFormModal").find("#content").val("").end().find("#parent_id").val(id).end().modal("show");
+    }
+</script>
+{/block}

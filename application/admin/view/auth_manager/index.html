@@ -1,0 +1,116 @@
+{extend name="layout" /}
+{block name="style"}
+<style>
+    .auth-list ul {
+        list-style: none;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .auth-list li {
+        float: none;
+        margin-bottom: 10px;
+        margin-left: 10px;
+        padding-top: 5px;
+    }
+
+    .auth-list li + ul > li {
+        float: left;
+    }
+
+    .auth-list li::before {
+        content: '└─';
+    }
+
+    .auth-list ul ~ li {
+        float: none !important;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="panel">
+    <div class="panel-body">
+        <div>
+            <div class="row">
+                <form action="{:url()}" class="form-horizontal">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="user-group-select" class="col-sm-4 control-label">
+                                请选择用户组
+                            </label>
+                            <div class="col-sm-8">
+                                <form action="{:url()}">
+                                    <select name="group_id" id="user-group-select" onchange="this.form.submit();"
+                                            class="form-control">
+                                        {volist name="_group_list" id="item"}
+                                        {if condition="input('group_id') == $item['id']"}
+                                        <option value="{$item.id}" selected="selected">{$item.title}</option>
+                                        {else/}
+                                        <option value="{$item.id}">{$item.title}</option>
+                                        {/if}
+                                        {/volist}
+                                    </select>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="auth-list">
+            <label>
+                全选<input type="checkbox" class="iswitch iswitch-success" id="check-all-box">
+            </label>
+            {assign name="level" value="-1"/}
+            {volist name="_node" id="item"}
+            {if condition="$level > $item['_level']"}
+            {for start="$item['_level']" end="$level"}
+            </ul>
+            {/for}
+            {/if}
+            {if condition="$level < $item._level"}
+            <ul>
+                {/if}
+                <li>
+                    <label>
+                        {$item.title}
+                        {if condition="in_array($item['id'], $_auth['rules'])"}
+                        <input type="checkbox" class="iswitch iswitch-info" name="rule[]" value="{$item.id}"
+                               form="privilege-form" checked="checked">
+                        {else/}
+                        <input type="checkbox" class="iswitch iswitch-info" name="rule[]" value="{$item.id}"
+                               form="privilege-form">
+                        {/if}
+                    </label>
+                </li>
+                {assign name="level" value="$item['_level']"/}
+                {/volist}
+            </ul>
+        </div>
+        <form action="{:url('update')}" id="privilege-form" onsubmit="submitForm(this);">
+            <input type="hidden" name="group_id" value="{$_auth.id}">
+            <div class="form-group">
+                <div class="btn-group">
+                    <button class="btn btn-success">保存</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script>
+    $("input:checkbox").change(function () {
+        $(this).closest("li").next("ul").find(":checkbox").prop("checked", $(this).prop("checked"));
+    });
+    $("#check-all-box").change(function () {
+        $("input:checkbox").prop("checked", $(this).prop("checked"));
+    });
+
+    function submitForm(form) {
+        event.preventDefault();
+        var fd = new FormData(form);
+        helper.post(form.action, fd);
+    }
+</script>
+{/block}

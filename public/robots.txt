@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /admin.php
+Disallow: /install.php
+Disallow: /router.php

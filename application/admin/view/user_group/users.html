@@ -1,0 +1,160 @@
+{extend name="layout" /}
+{block name="body"}
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-6">
+                <form action="" class="form-horizontal" method="get">
+                    <div class="form-group">
+                        <label for="group_id-select" class="control-label col-sm-4">请选择用户组</label>
+                        <div class="col-sm-6">
+                            <select name="group_id" id="group_id-select" class="form-control"
+                                    onchange="changeGroup(this)">
+                                {volist name="_group_list" id="_item"}
+                                {if condition="$_item['id'] == input('group_id')"}
+                                <option value="{$_item.id}" selected="selected">{$_item.title}</option>
+                                {else/}
+                                <option value="{$_item.id}">{$_item.title}</option>
+                                {/if}
+                                {/volist}
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <table class="table table-hover middle-align text-center">
+            <thead>
+            <tr>
+                <th class="visible-md visible-lg">UID</th>
+                <th class="visible-md visible-lg">用户组ID</th>
+                <th>用户E-Mail</th>
+                <th>用户组名称</th>
+                <th class="visible-md visible-lg">所属模块</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="_group.users" id="item"}
+            <tr class="item" data-id="{$item.uid}">
+                <td class="visible-md visible-lg">
+                    {$item.uid}
+                </td>
+                <td class="visible-md visible-lg">
+                    {$_group.id}
+                </td>
+                <td>
+                    {$item.email}
+                </td>
+                <td>
+                    {$_group.title}
+                </td>
+                <td class="visible-md visible-lg">
+                    {$_group.module}
+                </td>
+                <td>
+                    <input type="hidden" name="uid" value="{$item.uid}">
+                    <input type="hidden" name="group_id" value="{$_group.id}">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-danger" onclick="del(this)">删除</button>
+                    </div>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+        <div class="col-sm-4 col-sm-push-8">
+            <form action="{:url('userUpdate')}" onsubmit="helper.form.submit(this)">
+                <div class="input-group">
+                    <input type="hidden" name="group_id" value="{$_group.id}">
+                    <input type="text" class="form-control" placeholder="添加用户UID，逗号分隔多个uid" name="uid"
+                           required="required">
+                    <div class="input-group-btn">
+                        <button class="btn btn-success" onclick="">确定</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<div class="modal-group">
+    <div class="modal fade" id="user-update-modal" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{:url('update')}" class="user-form" method="post" onsubmit="helper.form.submit(this);">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title"><span class="action-type">更新</span>用户组</h4>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id" value="0">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="field-1" class="control-label">名称</label>
+                                    <input type="text" class="form-control" id="field-1" name="title"
+                                           placeholder="用户组名称" required="required">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="field-2" class="control-label">所属模块</label>
+                                    <input type="text" class="form-control" id="field-2" name="module"
+                                           placeholder="默认为admin模块" required="required">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="user-group-description">描述</label>
+                                    <textarea name="description" id="user-group-description" placeholder="用户组描述"
+                                              class="form-control autogrow" rows="10"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group no-margin">
+                                    <label class="control-label" for="status-switch">
+                                        启用:
+                                    </label>
+                                    <div>
+                                        <input id="status-switch" type="checkbox" class="iswitch iswitch-success"
+                                               checked="checked"
+                                               name="status" value="1">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+                        <button class="btn btn-success">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var deleteUrl = "{:url('userDelete')}";
+
+    function del(button) {
+        var $tr = $(button).closest(".item");
+        var uid = +$tr.find("[name=uid]").val();
+        var group_id = +$tr.find("[name=group_id]").val();
+        var data = {uid: uid, group_id: group_id};
+        helper.post(deleteUrl, data, function () {
+            helper.remove($tr);
+        });
+    }
+
+    function changeGroup(select) {
+        var group_id = select.value;
+        location.href = "{:url('')}?group_id=" + group_id;
+    }
+</script>
+{/block}

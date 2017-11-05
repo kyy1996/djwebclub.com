@@ -1,0 +1,300 @@
+{extend name="layout" /}
+{block name="body"}
+<div class="row">
+    <div class="col-lg-3">
+        <a href="{:url('blog/index')}" class="col-lg-12 col-sm-4 xe-widget xe-counter" data-count=".num" data-from="0"
+           data-to="{$_blog_count}" data-suffix="篇" data-duration="2">
+            <div class="xe-icon">
+                <i class="fa-file-text-o"></i>
+            </div>
+            <div class="xe-label">
+                <strong class="num">{$_blog_count}</strong>
+                <span>文章数量</span>
+            </div>
+        </a>
+        <a href="{:url('user/index')}" class="col-kg-12 col-sm-4 xe-widget xe-counter xe-counter-purple"
+           data-count=".num" data-from="0" data-to="{$_user_count}" data-suffix="位" data-duration="2"
+           data-easing="false">
+            <div class="xe-icon">
+                <i class="linecons-user"></i>
+            </div>
+            <div class="xe-label">
+                <strong class="num">{$_user_count}</strong>
+                <span>用户数量</span>
+            </div>
+        </a>
+        <a href="{:url('activity/index')}" class="col-lg-12 col-sm-4  xe-widget xe-counter xe-counter-info"
+           data-count=".num" data-from="0" data-to="{$_activity_count}" data-duration="2" data-easing="true"
+           data-suffix="个">
+            <div class="xe-icon">
+                <i class="fa-cubes"></i>
+            </div>
+            <div class="xe-label">
+                <strong class="num">{$_activity_count}</strong>
+                <span>进行中的活动数量</span>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6">
+        <div class="chart-item-bg">
+            <div class="chart-label">
+                <div class="h3 text-secondary text-bold" data-count="this" data-from="0" data-to="{$_statistic_count}"
+                     data-prefix="总计" data-suffix="次访问" data-duration="1">
+                    {$_statistic_count}
+                </div>
+                <span class="text-medium text-muted">最近访问趋势</span>
+            </div>
+            <div id="statistic-chart" style="height: 298px;"></div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+        <div class="chart-item-bg">
+            <div class="chart-label chart-label-small">
+                <div class="h4 text-purple text-bold" data-count="this" data-from="0" data-to="{$_checkin_count}"
+                     data-suffix="" data-duration="2">{$_checkin_count}
+                </div>
+                <span class="text-small text-upper text-muted">签到统计</span>
+            </div>
+            <div id="checkin-chart" style="height: 298px;"></div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-6">
+        <div class="chart-item-bg">
+            <div class="chart-label chart-label-small">
+                <div class="h4 text-secondary text-bold">活动累计签到次数
+                </div>
+            </div>
+            <div id="checkin-rank-chart" style="height: 298px; position: relative;">
+                <div style="position: absolute; top: 40px; right: 15px; left: 15px; bottom: 25px"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="chart-item-bg">
+            <div class="chart-label">
+                <div class="h1 text-purple text-bold" id="system-spu-status">0
+                </div>
+                <span class="text-small text-upper text-muted">系统负载情况</span>
+            </div>
+            <div id="system-cpu-chart" style="height: 298px;"></div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="script"}
+{load href="__JS__/devexpress-16.2/js/dx.all.js">/}
+<script>
+    /**
+     * 访客统计图表
+     */
+    var statistic_source = JSON.parse('{$_statistic_chart|json_encode}');
+    $("#statistic-chart").dxChart({
+        dataSource: statistic_source,
+        commonSeriesSettings: {
+            argumentField: "date",
+            point: {visible: true, size: 5, hoverStyle: {size: 7, border: 0, color: 'inherit'}},
+            line: {width: 1, hoverStyle: {width: 2}}
+        },
+        series: [
+            {valueField: "count", name: "访问次数", color: "#68b828"}
+        ],
+        legend: {
+            position: 'inside',
+            paddingLeftRight: 5
+        },
+        commonAxisSettings: {
+            label: {
+                visible: false
+            },
+            grid: {
+                visible: true,
+                color: '#f9f9f9'
+            }
+        },
+        valueAxis: {
+//            max: 10
+        },
+        argumentAxis: {
+            valueMarginsEnabled: false
+        },
+        tooltip: {
+            enabled: true,
+            customizeTooltip: function (point) {
+                return {text: point.originalArgument + "：" + point.originalValue};
+            }
+        }
+    });
+
+    /**
+     * 签到统计图表
+     */
+    var checkin_source = JSON.parse('{$_checkin_chart|json_encode}');
+    $("#checkin-chart").dxChart({
+        dataSource: checkin_source,
+        series: {
+            argumentField: "activity", valueField: "count", name: "签到", type: "bar", color: '#7c38bc'
+        },
+        commonAxisSettings: {
+            label: {
+                visible: false
+            },
+            grid: {
+                visible: false
+            }
+        },
+        legend: {
+            visible: false
+        },
+        argumentAxis: {
+            valueMarginsEnabled: true
+        },
+        valueAxis: {
+//            max: 30
+        },
+        equalBarWidth: {
+            width: 11
+        },
+        tooltip: {
+            enabled: true,
+            customizeTooltip: function (point) {
+                return {text: point.originalArgument + "：" + point.originalValue};
+            }
+        }
+    });
+
+    /**
+     * 签到统计图表
+     */
+    var checkin_rank_source = JSON.parse('{$_checkin_rank_chart|json_encode}');
+    $("#checkin-rank-chart").find("div").dxPieChart({
+        dataSource: checkin_rank_source,
+        series: {
+            argumentField: "activity", valueField: "count"
+        },
+        tooltip: {
+            enabled: true,
+            customizeTooltip: function (point) {
+                return {text: point.originalArgument + "：" + point.originalValue + "次"};
+            }
+        },
+        size: {
+//            height: 90
+        },
+        commonAxisSettings: {
+            label: {
+                visible: true
+            },
+            grid: {
+                visible: true,
+                color: '#f9f9f9'
+            }
+        },
+        legend: {
+            visible: true
+        }
+//        palette: ['#5e9b4c', '#6ca959', '#b9f5a6']
+    });
+
+    /**
+     * 系统负载信息
+     */
+    var system_cpu_source = [];
+    $("#system-cpu-chart").dxChart({
+        dataSource: system_cpu_source,
+        commonSeriesSettings: {
+            type: "area",
+            argumentField: "id"
+        },
+        series: [
+            {valueField: "utime", name: "用户CPU时间", color: '#7c38bc', opacity: .4},
+            {valueField: "stime", name: "系统CPU时间", color: '#000', opacity: .5}
+        ],
+        legend: {
+            verticalAlignment: "bottom",
+            horizontalAlignment: "right",
+            visible: true,
+            position: "inside"
+        },
+        commonAxisSettings: {
+            label: {
+                visible: false
+            },
+            grid: {
+                visible: true,
+                color: '#f5f5f5'
+            }
+        },
+        argumentAxis: {
+            label: {
+                visible: false
+            },
+            valueMarginsEnabled: false,
+            argumentType: "numeric",
+            position: "right"
+        },
+        valueAxis: {
+            max: 1000000
+        },
+        animation: {
+            enabled: true
+        }
+    });
+
+    var max_cpu = 600000, cpu_state_id = 0;
+
+    function updateSystemCPU() {
+        var $chart = $('#system-cpu-chart');
+        var chart_data = $chart.dxChart('instance').getDataSource();
+        helper.post("{:url('api/system/getStatus')}", {}, function (data) {
+            if (data.data['ru_utime.tv_usec'] || data.data['ru_stime.tv_usec']) {
+                cpu_state_id++;
+                if (+chart_data.items().length > 50) chart_data.store().remove(cpu_state_id - 50);
+//                var d = new Date();
+                chart_data.store().insert({
+//                    id: [d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds()].join("-"),
+                    id: cpu_state_id,
+                    utime: data.data['ru_utime.tv_usec'],
+                    stime: data.data['ru_stime.tv_usec']
+                });
+                if (data.data['ru_utime.tv_usec'] > max_cpu * 1.4) {
+                    max_cpu = data.data['ru_utime.tv_usec'];
+                    $chart.dxChart('instance').option('valueAxis', {max: max_cpu * 1.6});
+                }
+                if (data.data['ru_stime.tv_usec'] > max_cpu * 1.4) {
+                    max_cpu = data.data['ru_stime.tv_usec'];
+                    $chart.dxChart('instance').option('valueAxis', {max: max_cpu * 1.6});
+                }
+
+                chart_data.load();
+                var $el = $("#system-spu-status"),
+                    suffix = "微秒",
+                    prefix = "",
+                    target = data.data['ru_utime.tv_usec'],
+                    options = {
+                        useEasing: true,
+                        useGrouping: true,
+                        separator: ',',
+                        decimal: '.',
+                        prefix: prefix,
+                        suffix: suffix
+                    },
+                    cntr = new countUp($el[0], parseFloat($el.text().replace(suffix, "").replace(prefix, "").replace(",", "")), target, 0, 0.5, options);
+                cntr.start();
+            }
+
+            setTimeout(function () {
+                requestAnimationFrame(updateSystemCPU);
+            }, 1200);
+        }, function (data) {
+            helper.msg.error(data.msg);
+            if (data.url) location.href = data.url;
+        });
+    }
+
+    $(function () {
+        requestAnimationFrame(updateSystemCPU);
+    });
+</script>
+{/block}

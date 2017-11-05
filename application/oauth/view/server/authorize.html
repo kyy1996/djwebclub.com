@@ -1,0 +1,60 @@
+{extend name="layout"}
+{block name="body"}
+<div class="login-container">
+    <div class="row">
+        <div class="col-sm-6">
+            {notempty name="_error"}
+            <!-- Errors container -->
+            <div class="errors-container">
+                <div class="alert alert-danger">{$_error}</div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <button type="button" class="btn btn-block btn-black text-left" onclick="history.back()">
+                            <i class="fa-times"></i>
+                            返回
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {else/}
+            <form method="post" action="{$Request.url}" role="form" id="authorize" class="login-form"
+                  autocomplete="off">
+                <div class="login-header">
+                    <div class="logo">
+                        <img class="img-circle" src="{$_user.avatar}" alt="{$_user.email}" width="100"/>
+                    </div>
+                    <p>{$_user.email}</p>
+                    <a href="{$_loginUrl}">不是您的账户？</a>
+                    <h3 class="text-muted">您确定要授权以下权限给{$_app.client_id}吗？</h3>
+                </div>
+                <div class="form-group">
+                    <ul class="list">
+                        <li>获取您的个人信息</li>
+                        <li>获取您的选课信息</li>
+                        <li>获取您的成绩信息</li>
+                    </ul>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <button type="submit" name="authorized" class="btn btn-dark btn-block text-left"
+                                    value="yes">
+                                <i class="fa-check"></i>
+                                确定
+                            </button>
+                        </div>
+                        <div class="col-xs-6">
+                            <button type="submit" name="authorized" class="btn btn-danger btn-block text-left"
+                                    value="no">
+                                <i class="fa-times"></i>
+                                取消
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            {/notempty}
+        </div>
+    </div>
+</div>
+{/block}

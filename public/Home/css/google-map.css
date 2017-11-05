@@ -1,0 +1,23 @@
+.map_model {
+    height: 487px;
+}
+
+.map_model img {
+    max-width: none !important;
+}
+
+@media (max-width: 47.9em) {
+    .map_model {
+        height: 250px;
+    }
+}
+
+@media (max-width: 33.9em) {
+    .map_model {
+        height: 200px;
+    }
+}
+
+.map_locations {
+    display: none;
+}

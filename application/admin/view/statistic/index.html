@@ -1,0 +1,194 @@
+{extend name="layout"/} {block name="body"}
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="btn-group btn-group-md">
+            <button class="btn btn-primary" onclick="helper.form.modify()">
+                + 新增
+            </button>
+        </div>
+        <table class="table table-hover middle-align text-center">
+            <thead>
+            <tr>
+                <th>id</th>
+                <th>IP</th>
+                <th>IP归属</th>
+                <th>User-Agent</th>
+                <th>来源</th>
+                <th>访问时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="_list" id="item"}
+            <tr class="item" data-id="{$item.id}">
+                <td>
+                    <p class="form-control-static">
+                        {$item.id}
+                    </p>
+                    <input type="hidden" name="id" value="{$item.id}" form="form-{$item.id}">
+                </td>
+                <td>
+                    <p class="form-control-static">
+                        {$item.ip}
+                    </p>
+                    <input type="hidden" name="ip" value="{$item.ip}" form="form-{$item.id}">
+                </td>
+                <td>
+                    <p class="form-control-static">
+                        {$item.ip_location['country']} - {$item.ip_location['area']}
+                    </p>
+                </td>
+                <td>
+                    <p class="form-control-static">
+                        {$item.ua_text}
+                    </p>
+                    <input type="hidden" name="ua" value="{$item.ua}" form="form-{$item.id}">
+                </td>
+                <td>
+                    {$item.referer_text}
+                    <input type="hidden" name="referer" value="{$item.referer}" form="form-{$item.id}">
+                </td>
+                <td>{$item.time}</td>
+                <td>
+                    <input type="hidden" name="module" value="{$item.module}" form="form-{$item.id}">
+                    <input type="hidden" name="controller" value="{$item.controller}" form="form-{$item.id}">
+                    <input type="hidden" name="action" value="{$item.action}" form="form-{$item.id}">
+                    <input type="hidden" name="param_id" value="{$item.param_id}" form="form-{$item.id}">
+                    <form action="{:url('update')}" id="form-{$item.id}" onsubmit="helper.form.submit()">
+                        <div class="btn-group">
+                            <button class="btn btn-success">
+                                保存
+                            </button>
+                            <button type="button" class="btn btn-info" onclick="helper.form.modify(this)">
+                                修改
+                            </button>
+                            <button type="button" class="btn btn-danger"
+                                    onclick="helper.form.del('{:url(\'delete\')}')">
+                                删除
+                            </button>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+        <div>{:widget('common/paginator/show', [$_list])}</div>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<div class="modal-group">
+    <div class="modal fade" id="update-modal" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{:url('update')}" class="form" method="post" onsubmit="helper.form.submit();">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            ×
+                        </button>
+                        <h4 class="modal-title">
+							<span class="action-type">
+								更新
+							</span>
+                            统计系统
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <input type="hidden" name="id">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-ip">
+                                        IP
+                                    </label>
+                                    <input type="text" name="ip" id="modal-form-ip" class="form-control"
+                                           pattern="([\d\.]{1,3}){3}\d{1,3}" required="required" placeholder="访客IP地址">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-module">模块</label>
+                                    <input type="text" name="module" id="modal-form-module" class="form-control"
+                                           required="required" placeholder="模块名称">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-controller">
+                                        控制器
+                                    </label>
+                                    <input type="text" name="controller" id="modal-form-controller" class="form-control"
+                                           required="required" placeholder="控制器名称">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-action">
+                                        操作
+                                    </label>
+                                    <input type="text" name="action" id="modal-form-action" class="form-control"
+                                           required="required" placeholder="操作名称">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-param_id">
+                                        ID参数
+                                    </label>
+                                    <input type="text" name="param_id" id="modal-form-param_id" class="form-control"
+                                           placeholder="ID参数">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-ua">
+                                        User-Agent
+                                    </label>
+                                    <input type="text" name="ua" id="modal-form-ua" class="form-control"
+                                           placeholder="User-Agent">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-referer">
+                                        来源
+                                    </label>
+                                    <input type="url" name="referer" id="modal-form-referer" class="form-control"
+                                           placeholder="来源URL">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">
+                            取消
+                        </button>
+                        <button class="btn btn-success">
+                            保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}

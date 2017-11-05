@@ -1,0 +1,123 @@
+{extend name="layout"/}
+{block name="body"}
+<section class="well-7 bg2 register">
+    <div class="container">
+        <div class="bg">
+            <div class="cnt">
+                <h4 class="wow fadeIn" data-wow-delay=".2s"><span>注册</span></h4>
+                <h6 class="wow fadeIn" data-wow-delay=".4s">请填写您的个人信息</h6>
+                <p class="wow fadeIn" data-wow-delay=".6s">
+                </p>
+                <form id="register" action="{:url('user/register')}" method="post" class="form form-horizontal"
+                      onsubmit="return submitForm(this);">
+                    <input type="hidden" name="callback" value="{$Request.param.callback}">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="control-label" for="email">E-Mail</label>
+                                <input type="email" class="form-control" name="email" id="email" placeholder="E-Mail"
+                                       required="required" autocomplete="off" value="{$_info.username}"/>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label" for="mobile">手机号</label>
+                                <input type="tel" class="form-control" name="mobile" id="mobile" placeholder="手机号"
+                                       required="required" autocomplete="off" value="" autofocus="autofocus"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="control-label" for="password">密码</label>
+                                <input type="password" class="form-control" name="password" id="password"
+                                       placeholder="密码" required="required" autocomplete="off" minlength="6"
+                                       value="{$_info.password}" maxlength="32"/>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label" for="password">重复密码</label>
+                                <input type="password" class="form-control" name="password_confirm" minlength="6"
+                                       id="password_confirm" placeholder="密码" required="required" autocomplete="off"
+                                       value="" maxlength="32"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <h6>上海电机学院在校学生请填写如下信息，方便进行网上统计签到、认证学分。</h6>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="stu_no">学号</label>
+                        <input class="form-control" name="stu_no" id="stu_no" placeholder="学号" autocomplete="off"
+                               value="" pattern="^[1-9]\d{2}00\d{7}$"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="school">学院</label>
+                        <input class="form-control" name="school" id="school" placeholder="学院" autocomplete="off"
+                               value="" list="school-list"/>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="control-label" for="class">班级</label>
+                                <input class="form-control" name="class" id="class" placeholder="班级" autocomplete="off"
+                                       value=""/>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label" for="name">姓名</label>
+                                <input class="form-control" name="name" id="name" placeholder="姓名" autocomplete="off"
+                                       value=""/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-xs-12 text-md-right">
+                                <button class="btn btn-primary" data-loading-text="正在跳转"
+                                        onclick="return register(this)"><span class="btn-icon"><i
+                                        class="fa fa-user-plus"></i></span>注册
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<datalist id="school-list">
+    <option>电气学院</option>
+    <option>电子信息学院</option>
+    <option>汽车学院</option>
+    <option>机械学院</option>
+    <option>材料学院</option>
+    <option>商学院</option>
+    <option>外国语学院</option>
+    <option>设计与艺术学院</option>
+    <option>高职学院</option>
+    <option>中德智能制造学院</option>
+    <option>德泰学苑</option>
+    <option>继续教育学院</option>
+</datalist>
+{/block}
+{block name="script"}
+<script>
+    function submitForm(form) {
+        helper.post("{:url('register')}", new FormData(form), function (data) {
+            helper.msg.success("注册成功，" + data.wait + "秒后跳转至登录页");
+            setTimeout(function () {
+                location.href = data.url;
+            }, data.wait * 1000);
+        });
+        return false;
+    }
+
+    function register(button) {
+        if (button.form.password_confirm.value !== button.form.password.value)
+            button.form.password_confirm.setCustomValidity("确认密码与原密码不一致");
+        return true;
+    }
+
+    $("input").keydown(function (e) {
+        e.target.setCustomValidity("");
+    });
+</script>
+{/block}

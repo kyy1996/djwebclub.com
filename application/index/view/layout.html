@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>
+        {block name="title"}{:get_action_name(request()->action())} -
+        {:get_action_name(request()->controller())}{/block} - {$_common.website_title}
+    </title>
+    <meta charset="utf-8">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="theme-color" content="#e74c3c">
+    <link rel="icon" href="__IMG__/favicon.ico" type="image/x-icon">
+    {load href="__STATIC__/font-awesome/css/font-awesome.min.css"/}
+    {load href="__STATIC__/bootstrap4/css/bootstrap.min.css"/}
+    <!--{load href="__CSS__/grid.css"/}-->
+    {load href="__CSS__/style.min.css"}
+    {load href="__CSS__/webmaster.min.css"}
+    {load href="__STATIC__/jquery/jquery-3.2.1.min.js"/}
+    {load href="__STATIC__/bootstrap4/js/bootstrap.min.js"/}
+    {load href='__JS__/device.min.js'/}
+    {block name="style"}{/block}
+    <!-- Piwik -->
+    <script type="text/javascript">
+        var _paq = _paq || [];
+        /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+        _paq.push(['trackPageView']);
+        _paq.push(['enableLinkTracking']);
+        (function () {
+            var u = '//piwik.kyy1996.com/';
+            _paq.push(['setTrackerUrl', u + 'piwik.php']);
+            _paq.push(['setSiteId', '1']);
+            var d   = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+            g.type  = 'text/javascript';
+            g.async = true;
+            g.defer = true;
+            g.src   = u + 'piwik.js';
+            s.parentNode.insertBefore(g, s);
+        })();
+    </script>
+    <!-- End Piwik Code -->
+</head>
+
+<body>
+<div class="page">
+    {include file="_layout/header"}
+    <!--========================================================
+                              CONTENT
+    =========================================================-->
+    <main>
+        {block name="body"}{/block}
+    </main>
+    {include file="_layout/footer"/}
+</div>
+{load href="__JS__/common.js"}
+{load href="__JS__/script.js"}
+{load href="__STATIC__/layer/layer.js"}
+{load href="__STATIC__/Common/js/helper.js"}
+<script>
+    // 百度链接主动推送
+    (function (window, document) {
+        var bp          = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(bp, s);
+    })(window, document);
+</script>
+{block name="script"}{/block}
+</body>
+</html>

@@ -1,0 +1,310 @@
+{extend name="layout"/} {block name="body"}
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="btn-group btn-group-md">
+                    <button class="btn btn-primary" onclick="modify()">
+                        + 新增
+                    </button>
+                    <a href="{:url('export')}?{:http_build_query(input('get.'))}" class="btn btn-info"
+                       target="_blank">
+                        导出名单
+                    </a>
+                </div>
+            </div>
+            <div class="pull-right col-sm-4">
+                <form action="" method="get" class="form-horizontal">
+                    <label for="job-selector" class="control-label col-xs-4">选择职位</label>
+                    <div class="col-xs-8">
+                        <select name="job_id" id="job-selector" class="form-control" onchange="this.form.submit()">
+                            <option value="">全部</option>
+                            {volist name="_job_list" id="job"}
+                            {if condition="$job.id == input('job_id')"}
+                            <option value="{$job.id}" selected="selected">{$job.name} @ {$job.department}</option>
+                            {else/}
+                            <option value="{$job.id}">{$job.name} @ {$job.department}</option>
+                            {/if}
+                            {/volist}
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <table class="table table-hover table-striped middle-align text-center">
+            <thead>
+            <tr>
+                <th>id</th>
+                <th>报名职位</th>
+                <th>姓名</th>
+                <th>学号</th>
+                <th>班级</th>
+                <th>QQ</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="_list" id="item"}
+            <tr class="item" data-id="{$item.id}">
+                <td>
+                    <p class="form-control-static">
+                        {$item.id}
+                    </p>
+                    <input type="hidden" name="id" value="{$item.id}" form="form-{$item.id}">
+                </td>
+                <td>
+                    <p class="form-control-static">
+                        {$item.job->name}
+                    </p>
+                    <input type="hidden" name="job_id" value="{$item.job_id}" form="form-{$item.id}">
+                </td>
+                <td>
+                    <input type="text" name="name" form="form-{$item.id}" class="form-control"
+                           required="required" value="{$item.name}" placeholder="姓名">
+                </td>
+                <td>
+                    <input type="text" name="stu_no" form="form-{$item.id}" class="form-control"
+                           required="required" value="{$item.stu_no}" placeholder="学号">
+                </td>
+                <td>
+                    <input type="text" name="class" form="form-{$item.id}" class="form-control"
+                           required="required" value="{$item.class}" placeholder="班级">
+                </td>
+                <td>
+                    <input type="text" name="qq" form="form-{$item.id}" class="form-control"
+                           required="required" value="{$item.qq}" placeholder="QQ">
+                </td>
+                <td>
+                    <label>
+                        {if condition="$item['status'] == 0"}
+                        <input type="radio" value="0" form="form-{$item.id}" name="status" class="cbr cbr-secondary"
+                               checked="checked">
+                        {else/}
+                        <input type="radio" value="0" form="form-{$item.id}" name="status" class="cbr cbr-secondary">
+                        {/if}
+                        已提交
+                    </label>
+                    <label>
+                        {if condition="$item['status'] == 1"}
+                        <input type="radio" value="1" form="form-{$item.id}" name="status" class="cbr cbr-secondary"
+                               checked="checked">
+                        {else/}
+                        <input type="radio" value="1" form="form-{$item.id}" name="status" class="cbr cbr-secondary">
+                        {/if}
+                        审核中
+                    </label>
+                    <label>
+                        {if condition="$item['status'] == 2"}
+                        <input type="radio" value="2" form="form-{$item.id}" name="status" class="cbr cbr-secondary"
+                               checked="checked">
+                        {else/}
+                        <input type="radio" value="2" form="form-{$item.id}" name="status" class="cbr cbr-secondary">
+                        {/if}
+                        已通过
+                    </label>
+                    <label>
+                        {if condition="$item['status'] == -1"}
+                        <input type="radio" value="-1" form="form-{$item.id}" name="status" class="cbr cbr-secondary"
+                               checked="checked">
+                        {else/}
+                        <input type="radio" value="-1" form="form-{$item.id}" name="status" class="cbr cbr-secondary">
+                        {/if}
+                        拒绝
+                    </label>
+                </td>
+                <td>
+                    <input type="hidden" name="create_time" value="{$item.create_time}" form="form-{$item.id}">
+                    <input type="hidden" name="update_time" value="{$item.update_time}" form="form-{$item.id}">
+                    <input type="hidden" name="ip" value="{$item.ip}" form="form-{$item.id}">
+                    <textarea name="resume" form="form-{$item.id}" placeholder="简历" class="form-control hidden"
+                              cols="30">{$item.resume}</textarea>
+                    <form action="{:url('update')}" id="form-{$item.id}" onsubmit="helper.form.submit()">
+                        <div class="btn-group">
+                            <button class="btn btn-success">
+                                保存
+                            </button>
+                            <button type="button" class="btn btn-info" onclick="modify(this)">
+                                详情
+                            </button>
+                            <button type="button" class="btn btn-danger"
+                                    onclick="helper.form.del('{:url(\'delete\')}')">
+                                删除
+                            </button>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+        <div>{:widget('common/paginator/show', [$_list])}</div>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<div class="modal-group">
+    <div class="modal fade" id="update-modal" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{:url('update')}" class="form" method="post" onsubmit="helper.form.submit();">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            ×
+                        </button>
+                        <h4 class="modal-title">
+							<span class="action-type">
+								更新
+							</span>
+                            报名信息
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-job_id">
+                                        报名职位
+                                    </label>
+                                    <select name="job_id" id="modal-form-job_id" class="form-control"
+                                            required="required">
+                                        {volist name="_job_list" id="vo"}
+                                        <option value="{$vo.id}">{$vo.name}</option>
+                                        {/volist}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-name">
+                                        姓名
+                                    </label>
+                                    <input type="text" name="name" id="modal-form-name" class="form-control"
+                                           required="required" placeholder="姓名">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-stu_no">
+                                        学号
+                                    </label>
+                                    <input type="text" name="stu_no" id="modal-form-stu_no" class="form-control"
+                                           required="required" placeholder="学号">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-class">
+                                        班级
+                                    </label>
+                                    <input type="text" name="class" id="modal-form-class" class="form-control"
+                                           required="required" placeholder="班级">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-qq">
+                                        QQ
+                                    </label>
+                                    <input type="text" name="qq" id="modal-form-qq" class="form-control"
+                                           required="required"
+                                           placeholder="QQ">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-resume">
+                                        简历
+                                    </label>
+                                    <textarea name="resume" id="modal-form-resume" class="form-control"
+                                              required="required" placeholder="简历"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label">
+                                        状态
+                                    </label>
+                                    <label>
+                                        <input type="radio" value="0" name="status" class="cbr cbr-secondary">
+                                        已提交
+                                    </label>
+                                    <label>
+                                        <input type="radio" value="1" name="status" class="cbr cbr-secondary">
+                                        审核中
+                                    </label>
+                                    <label>
+                                        <input type="radio" value="2" name="status" class="cbr cbr-secondary">
+                                        已通过
+                                    </label>
+                                    <label>
+                                        <input type="radio" value="-1" name="status" class="cbr cbr-secondary">
+                                        拒绝
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-create_time">
+                                        申请时间
+                                    </label>
+                                    <p class="form-control-static" id="modal-form-create_time"
+                                       data-name="create_time"></p>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-update_time">
+                                        审核时间
+                                    </label>
+                                    <p class="form-control-static" id="modal-form-update_time"
+                                       data-name="update_time"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-ip">
+                                        IP
+                                    </label>
+                                    <p class="form-control-static" id="modal-form-ip"
+                                       data-name="ip"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">
+                            取消
+                        </button>
+                        <button class="btn btn-success">
+                            保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function modify(button) {
+        helper.form.modify(button).find(".cbr").change();
+    }
+</script>
+{/block}

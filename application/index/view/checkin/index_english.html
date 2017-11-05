@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=yes,initial-scale=1.0">
+    {load href="__STATIC__/bootstrap4/css/bootstrap.min.css"/}
+    {load href="__CSS__/checkin.min.css"/}
+    {load href="__STATIC__/jquery/jquery-3.2.1.min.js"/}
+    {load href="__STATIC__/bootstrap4/js/bootstrap.min.js"/}
+    {load href="__STATIC__/layer/layer.js"/}
+    <title>Check in</title>
+</head>
+
+<body>
+<div class="bg"></div>
+<header>
+    <div class="header-container text-center">
+        <figure class="logo">
+            <img src="__IMG__/logo-color.png"/>
+        </figure>
+        <h2 class="h2">CHECK IN</h2>
+        <p class="lead">
+            Please complete the following to check in
+        </p>
+    </div>
+</header>
+<main class="center-block">
+    <div class="clearfix">
+        <div class="col-xs-12">
+            <form method="post" action="{:url('save')}" enctype="multipart/form-data" class="form-horizontal"
+                  onsubmit="checkin();return false;" id="checkin-form">
+                <input type="hidden" name="hash" value="{:input('hash')}">
+                <fieldset class="form-group">
+                    <div class="col-sm-12">
+                        <input type="text" name="stu_no" max="14" id="stu_no" class="form-control" autofocus="autofocus"
+                               placeholder="Student No." required="required"/>
+                    </div>
+                </fieldset>
+                <fieldset class="form-group">
+                    <div class="col-sm-12">
+                        <input type="text" name="class" id="class" class="form-control" placeholder="Class"
+                               required="required"/>
+                    </div>
+                </fieldset>
+                <fieldset class="form-group">
+                    <div class="col-sm-12">
+                        <input type="text" name="name" id="name" class="form-control" placeholder="Full Name"
+                               required="required"/>
+                    </div>
+                </fieldset>
+                <fieldset class="form-group">
+                    <div class="col-sm-12">
+                        <div class="select">
+                            <select id="activity" name="activity" class="form-control" required="required"
+                                    title="Activity" disabled="disabled">
+                                {notempty name="_activities_list"}
+                                {volist name="_activities_list" id="vo"}
+                                <option value="{$vo.id}">{$vo.name} {$vo.time} @ {$vo.location}
+                                </option>
+                                {/volist}
+                                {else/}
+                                <option value="">There's no activity for now.</option>
+                                {/notempty}
+                            </select>
+                            <i class="caret"></i>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset class="form-group text-center">
+                    <button type="submit" class="btn btn-primary-outline btn-lg" id="checkin-btn">CHECK IN
+                    </button>
+                </fieldset>
+                <fieldset class="form-group text-center">
+                    <p class="text-muted text-center">Thanks for your coming!</p>
+                    <a href="{:url('')}?{:http_build_query(input('get.'))}" class="btn-link btn text-muted">简体中文</a>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</main>
+<footer class="footer">
+    &copy;2015-{:date('Y',time())}&nbsp;<a href="/">WebMaster Club</a> @ School of Electronic
+    Information<br/>President：孔元元
+</footer>
+<script type="text/javascript">
+    if (localStorage && localStorage.getItem("webmaster_name")) {
+        $("#name").val(localStorage.getItem("webmaster_name"));
+        $("#stu_no").val(localStorage.getItem("webmaster_stu_no"));
+        $("#class").val(localStorage.getItem("webmaster_class"));
+    }
+    $(function () {
+        $("#stu_no").blur(function () {
+            if (!$("#name").val())
+                $.ajax({
+                    url: "{:url('getInfo')}",
+                    type: "post",
+                    dataType: "json",
+                    async: true,
+                    data: {stu_no: $(this).val()},
+                    success: function (data) {
+                        $("#name").val(data.msg.name);
+                        $("#class").val(data.msg.class);
+                    }
+                });
+        });
+    });
+
+    function checkin() {
+        $.ajax({
+            type: "post",
+            url: "{:url('save')}",
+            async: true,
+            data: $("#checkin-form").serialize(),
+            dataType: "json",
+            success: function (data) {
+                if (data.status)
+                    layer.msg("Thank you！", {
+                        shift: 1,
+                        shade: 0.6,
+                        btn: ['OK'],
+                        time: 0,
+                        yes: function () {
+                            layer.closeAll();
+                            if (localStorage) {
+                                localStorage.setItem("webmaster_name", $("#name").val());
+                                localStorage.setItem("webmaster_stu_no", $("#stu_no").val());
+                                localStorage.setItem("webmaster_class", $("#class").val());
+                            }
+                            window.close();
+                        }
+                    });
+                else
+                    layer.msg(data.msg, {
+                        shift: 6,
+                        time: 3000
+                    });
+            },
+            error: function () {
+                layer.msg("Try again please!", {
+                    shift: 6,
+                    time: 2000
+                });
+            }
+        });
+    }
+</script>
+</body>
+</html>

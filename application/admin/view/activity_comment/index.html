@@ -1,0 +1,165 @@
+{extend name="layout"/}
+{block name="body"}
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="btn-group btn-group-md">
+        </div>
+        <table class="table table-hover middle-align text-center">
+            <thead>
+            <tr>
+                <th>id</th>
+                <th>活动名称</th>
+                <th>评价用户</th>
+                <th>昵称</th>
+                <th>联系方式</th>
+                <th>评价时间</th>
+                <th>评价IP</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="_list" id="item"}
+            <tr class="item" data-id="{$item.id}">
+                <td>
+                    <p class="form-control-static">
+                        {$item.id}
+                    </p>
+                    <input type="hidden" name="id" value="{$item.id}" form="form-{$item.id}">
+                </td>
+                <td>
+                    <p class="form-control-static">
+                        {$item.activity->name|default='无活动'}
+                    </p>
+                    <input type="hidden" name="activity_id" value="{$item.activity_id}" form="form-{$item.id}">
+                </td>
+                <td>
+                    <p class="form-control-static">
+                        {$item.user->email|default='未登录'}
+                    </p>
+                    <input type="hidden" name="uid" value="{$item.uid}" form="form-{$item.id}">
+                </td>
+                <td>
+                    <p class="form-control-static">
+                        {$item.nickname}
+                    </p>
+                    <input type="hidden" name="nickname" value="{$item.nickname}" form="form-{$item.id}">
+                </td>
+                <td>
+                    <p class="form-control-static">
+                        {$item.contact}
+                    </p>
+                    <input type="hidden" name="contact" value="{$item.contact}" form="form-{$item.id}">
+                </td>
+                <td>
+                    <p class="form-control-static">
+                        {$item.create_time}
+                    </p>
+                    <input type="hidden" name="create_time" value="{$item.create_time}" form="form-{$item.id}">
+                </td>
+                <td>
+                    <p class="form-control-static">
+                        {$item.ip}
+                    </p>
+                    <input type="hidden" name="ip" value="{$item.ip}" form="form-{$item.id}">
+                </td>
+                <td>
+                    <input name="content" form="form-{$item.id}" value="{$item.content}" type="hidden">
+                    <form action="{:url('update')}" id="form-{$item.id}" onsubmit="helper.form.submit()">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-info" onclick="helper.form.modify(this)">
+                                详情
+                            </button>
+                            <button type="button" class="btn btn-danger"
+                                    onclick="helper.form.del('{:url(\'delete\')}')">
+                                删除
+                            </button>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+        <div>{:widget('common/paginator/show', [$_list])}</div>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<div class="modal-group">
+    <div class="modal fade" id="update-modal" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{:url('update')}" class="form" method="post" onsubmit="helper.form.submit();">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            ×
+                        </button>
+                        <h4 class="modal-title">
+                            详情
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-nickname">
+                                        昵称
+                                    </label>
+                                    <p data-name="nickname" id="modal-form-nickname" class="form-control-static"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-contact">
+                                        联系方式
+                                    </label>
+                                    <p data-name="contact" id="modal-form-contact" class="form-control-static"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-content">
+                                        评价内容
+                                    </label>
+                                    <p data-name="content" id="modal-form-content" class="form-control-static"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-ip">
+                                        评价IP
+                                    </label>
+                                    <p data-name="ip" id="modal-form-ip" class="form-control-static"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-create_time">
+                                        评价时间
+                                    </label>
+                                    <p data-name="create_time" id="modal-form-create_time"
+                                       class="form-control-static"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">
+                            关闭
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}

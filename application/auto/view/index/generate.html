@@ -1,0 +1,46 @@
+{extend name="layout"/}
+{block name="body"}
+<div class="row">
+    <div class="col-sm-6 col-sm-push-3">
+        {if condition="$_result"}
+        <div class="xe-widget xe-vertical-counter">
+            <div class="xe-icon">
+                <i class="fa-check"></i>
+            </div>
+            <div class="xe-label">
+                <strong class="num">操作成功</strong>
+                <span>创建了如下文件</span>
+                {volist name="_files" id="filename"}
+                <span><i class="fa-file-o"></i>&nbsp;{$filename}</span>
+                {/volist}
+            </div>
+            <p></p>
+            <div class="row text-center">
+                <div class="col-xs-12">
+                    <div class="btn-group btn-group-lg">
+                        <a href="{:url('auto/index/index')}" class="btn btn-default">确定，返回首页</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {else/}
+        <div class="xe-widget xe-vertical-counter xe-vertical-counter-danger">
+            <div class="xe-icon">
+                <i class="fa-close"></i>
+            </div>
+            <div class="xe-label">
+                <strong class="num">操作失败</strong>
+                <span>{$_error}</span>
+            </div>
+            <p></p>
+            <div class="row text-center">
+                <div class="col-xs-12">
+                    <a href="javascript:location.reload()" class="btn btn-default btn-lg">重新创建</a>
+                    <a href="javascript:history.back()" class="btn btn-warning btn-lg">返回修改</a>
+                </div>
+            </div>
+        </div>
+        {/if}
+    </div>
+</div>
+{/block}

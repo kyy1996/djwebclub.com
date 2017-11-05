@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>社团活动证明 - 网页客研究会</title>
+    {load href="__STATIC__/bootstrap4/css/bootstrap.min.css"}
+    {load href="__STATIC__/font-awesome/css/font-awesome.min.css"}
+    <style>
+        * {
+            transition-duration: 0.3s;
+        }
+
+        @media print {
+            body > * {
+                display: none;
+            }
+
+            .container {
+                margin-top: 6rem;
+                display: block;
+            }
+
+            .hidden-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container hidden-print m-t-lg m-b-md">
+    <div class="alert alert-info">
+        <h5 class="alert-heading"><i class="fa fa-info-circle"></i>若没有弹出打印对话框，请按 <kbd>CTRL</kbd> + <kbd>P</kbd> (Mac下为 <kbd>Command</kbd> + <kbd>p</kbd>) 打印</h5>
+    </div>
+</div>
+<div class="container">
+    <h1 class="text-xs-center">社团活动证明</h1>
+    <p>
+        兹证明：
+    </p>
+    <p style="text-indent: 2em;">
+        上海电机学院{$_info.class}{$_info.name}同学参加网页客研究会社团活动，表现优异，活动次数共计20次以上。
+    </p>
+    <p>
+        特此证明！
+    </p>
+    <p class="text-xs-right">
+        证明人：<img src="__IMG__/signature.jpg" alt="孔元元" height="40"><br>{:date('Y年n月j日')}
+    </p>
+</div>
+<div class="container hidden-print m-t-lg m-b-md">
+    <button class="btn btn-primary-outline" onclick="print();"><i class="fa fa-print"></i>打印</button>
+    <a href="{:url('downloadProof')}" class="btn btn-warning-outline"><i class="fa fa-download"></i>下载PDF</a>
+</div>
+<script>
+    window.print();
+</script>
+</body>
+</html>

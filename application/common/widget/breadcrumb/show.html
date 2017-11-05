@@ -1,0 +1,16 @@
+<ol class="breadcrumb bc-1">
+    <li>
+        <a href="{:url('admin/index/index')}"><i class="fa-home"></i>主页</a>
+    </li>
+    {volist name="breads" id="bread"}
+    {if condition="$key + 1 == count($breads)"}
+    <li class="active">
+        <span>{$bread.title}</span>
+    </li>
+    {else/}
+    <li>
+        <a href="{:url($bread.url)}"><i class="{$bread.icon_class}"></i>{$bread.title}</a>
+    </li>
+    {/if}
+    {/volist}
+</ol>

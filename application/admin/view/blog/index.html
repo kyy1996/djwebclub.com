@@ -1,0 +1,297 @@
+{extend name="layout"/}
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/editor.md/css/editormd.min.css">
+{/block}
+{block name="body"}
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="btn-group btn-group-md">
+            <button class="btn btn-primary" onclick="modify()">+ 新增</button>
+        </div>
+        <table class="table table-hover middle-align text-center">
+            <thead>
+            <tr>
+                <th class="hidden-xs">id</th>
+                <th class="hidden-xs">文章封面</th>
+                <th>标题</th>
+                <th class="hidden-xs">分类</th>
+                <th class="hidden-xs">隐藏</th>
+                <th class="hidden-xs">发表人</th>
+                <th class="hidden-xs">IP</th>
+                <th class="hidden-xs">发表时间</th>
+                <th class="hidden-xs">更新时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="_list" id="item"}
+            <tr class="item" data-id="{$item.id}">
+                <td class="hidden-xs">
+                    <p class="form-control-static">
+                        {$item.id}
+                    </p>
+                    <input type="hidden" name="id" value="{$item.id}" form="form-{$item.id}">
+                </td>
+                <td class="hidden-xs">
+                    <figure class="img-uploader-wrapper">
+                        <img src="{$item.cover_img}" class="cover-img" alt="" width="160" height="90"
+                             onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQYV2NgAAIAAAUAAarVyFEAAAAASUVORK5CYII='">
+                        <input type="file" data-name="cover_img" class="form-control img-file-input uploader-file"
+                               form="form-{$item.id}" data-title="文章封面" onchange="helper.imageInputChange()">
+                        <input type="hidden" name="cover_img" value="{$item.cover_img}" form="form-{$item.id}">
+                    </figure>
+                </td>
+                <td>
+                    <input type="text" name="title" form="form-{$item.id}" class="form-control"
+                           required="required" value="{$item.title}" placeholder="文章标题">
+                    <textarea title="文章内容" name="content" form="form-{$item.id}"
+                              class="hidden">{$item.content}</textarea>
+                </td>
+                <td class="hidden-xs">
+                    <select name="class" class="form-control" form="form-{$item.id}" title="分类">
+                        {if condition="$item.class == '0'"}
+                        <option value="0" selected="selected">
+                            无分类
+                        </option>
+                        {else/}
+                        <option value="0">
+                            无分类
+                        </option>
+                        {/if}
+                        {volist name="_categories_list" id="category"}
+                        {if condition="$item.class == $category->id"}
+                        <option value="{$category->id}" selected="selected">
+                            {$category->name}
+                        </option>
+                        {else/}
+                        <option value="{$category->id}">
+                            {$category->name}
+                        </option>
+                        {/if}
+                        {/volist}
+                    </select>
+                </td>
+                <td class="hidden-xs">
+                    <label>
+                        隐藏 {if condition="$item.hide"}
+                        <input type="checkbox" class="iswitch iswitch-info" value="1" form="form-{$item.id}"
+                               name="hide" checked="checked">
+                        {else/}
+                        <input type="checkbox" class="iswitch iswitch-info" value="1" form="form-{$item.id}"
+                               name="hide">
+                        {/if}
+                    </label>
+                </td>
+                <td class="hidden-xs">
+                    <p class="form-control-static">
+                        {$item.user->email}
+                    </p>
+                    <input type="hidden" name="uid" value="{$item.uid}" form="form-{$item.id}">
+                </td>
+                <td class="hidden-xs">
+                    <p class="form-control-static">
+                        {$item.ip}
+                    </p>
+                    <input type="hidden" name="ip" value="{$item.ip}" form="form-{$item.id}">
+                </td>
+                <td class="hidden-xs">
+                    <p class="form-control-static">
+                        {$item.create_time}
+                    </p>
+                </td>
+                <td class="hidden-xs">
+                    <p class="form-control-static">
+                        {$item.update_time}
+                    </p>
+                </td>
+                <td>
+                    <form action="{:url('update')}" id="form-{$item.id}" onsubmit="helper.form.submit()">
+                        <div class="btn-group">
+                            <button class="btn btn-success">
+                                保存
+                            </button>
+                            <button type="button" class="btn btn-info" onclick="modify(this)">
+                                修改
+                            </button>
+                            <button type="button" class="btn btn-danger"
+                                    onclick="helper.form.del('{:url(\'delete\')}')">
+                                删除
+                            </button>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+        <div>{:widget('common/paginator/show', [$_list])}</div>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<div class="modal-group">
+    <div class="modal fade" id="update-modal" aria-hidden="false">
+        <div class="modal-dialog" style="width: 90%;">
+            <div class="modal-content">
+                <form action="{:url('update')}" class="form" method="post" onsubmit="return submitForm();">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            ×
+                        </button>
+                        <h4 class="modal-title">
+							<span class="action-type">
+								更新
+							</span>
+                            文章
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-title">
+                                        标题
+                                    </label>
+                                    <input type="text" name="title" id="modal-form-title" class="form-control"
+                                           required="required" placeholder="文章标题">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-cover_img">
+                                        文章封面
+                                    </label>
+                                    <figure class="img-uploader-wrapper">
+                                        <img src="" alt="" width="160" height="90"
+                                             onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQYV2NgAAIAAAUAAarVyFEAAAAASUVORK5CYII='">
+                                        <input type="file" data-name="cover_img" id="modal-form-cover_img"
+                                               class="form-control uploader-file" data-title="文章封面"
+                                               onchange="helper.imageInputChange()">
+                                        <input type="hidden" name="cover_img" value="">
+                                    </figure>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-class">
+                                        分类
+                                    </label>
+                                    <select name="class" id="modal-form-class" class="form-control" title="分类">
+                                        <option value="0">
+                                            无分类
+                                        </option>
+                                        {volist name="_categories_list" id="category"}
+                                        <option value="{$category->id}">
+                                            {$category->name}
+                                        </option>
+                                        {/volist}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-content">
+                                        内容
+                                    </label>
+                                    <div id="markdown-editor">
+                                        <textarea name="content" id="modal-form-content" required="required"
+                                                  class="form-control" placeholder="文章内容" rows="30"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-hide">
+                                        隐藏
+                                        <input type="checkbox" class="iswitch iswitch-info" value="1"
+                                               id="modal-form-hide" name="hide">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">
+                            取消
+                        </button>
+                        <button class="btn btn-success">
+                            保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{load href="__STATIC__/editor.md/editormd.min.js"}
+{load href="http://gosspublic.alicdn.com/aliyun-oss-sdk-4.4.4.min.js"}
+{load href="__STATIC__/Common/js/OSSHelper.js"}
+<script>
+    var markdownOptions = {
+//        width: "90%",
+            height: 740,
+            path: '__STATIC__/editor.md/lib/',
+            codeFold: true,
+            //syncScrolling : false,
+            saveHTMLToTextarea: true,    // 保存 HTML 到 Textarea
+            searchReplace: true,
+//        watch: false,                // 关闭实时预览
+//            htmlDecode: true,            // 开启 HTML 标签解析，为了安全性，默认不开启
+            htmlDecode: "style,script,iframe|on*",            // 开启 HTML 标签解析，为了安全性，默认不开启
+            //toolbar  : false,             //关闭工具栏
+            //previewCodeHighlight : false, // 关闭预览 HTML 的代码块高亮，默认开启
+            emoji: true,
+            taskList: true,
+//            tocm: false,         // Using [TOCM]
+            tex: true,                   // 开启科学公式TeX语言支持，默认关闭
+            flowChart: true,             // 开启流程图支持，默认关闭
+            sequenceDiagram: true,       // 开启时序/序列图支持，默认关闭,
+            //dialogLockScreen : false,   // 设置弹出层对话框不锁屏，全局通用，默认为true
+            //dialogShowMask : false,     // 设置弹出层对话框显示透明遮罩层，全局通用，默认为true
+            //dialogDraggable : false,    // 设置弹出层对话框不可拖动，全局通用，默认为true
+            //dialogMaskOpacity : 0.4,    // 设置透明遮罩层的透明度，全局通用，默认值为0.1
+            //dialogMaskBgColor : "#000", // 设置透明遮罩层的背景颜色，全局通用，默认为#fff
+            imageUpload: true,
+            imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+            imageUploadURL: "{:url('api/File/upload')}",
+            onload: function () {
+                //this.fullscreen();
+                //this.unwatch();
+                //this.watch().fullscreen();
+
+                //this.setMarkdown("#PHP");
+                //this.height(480);
+                resetMarkdown();
+            }
+        },
+        markdownEditor = null;
+
+    function modify(button) {
+        var content = helper.form.modify(button).find("[name=content]").val();
+        if (!markdownEditor)
+            markdownEditor = editormd("markdown-editor", $.extend({}, {}, markdownOptions));
+        else resetMarkdown(content);
+    }
+
+    function resetMarkdown(content) {
+        setTimeout(function () {
+            content !== undefined && markdownEditor.setValue(content);
+            markdownEditor.codeEditor.setSize();
+        }, 300);
+    }
+
+    function submitForm() {
+//        $("#modal-form-content").val(markdownEditor.getHTML());
+        helper.form.submit();
+    }
+</script>
+{/block}

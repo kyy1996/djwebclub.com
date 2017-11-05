@@ -1,0 +1,338 @@
+{extend name="layout" /}
+{block name="body"}
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="btn-group btn-group-md">
+            <button class="btn btn-primary" onclick="add(this)">+ 新增</button>
+        </div>
+        <table class="table table-hover middle-align text-center">
+            <thead>
+            <tr>
+                <th>标题</th>
+                <th class="visible-sm visible-md visible-lg">节点路径</th>
+                <th class="visible-md visible-lg">排序</th>
+                <th class="visible-lg">图标类名</th>
+                <th class="hidden-xs">状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="_list" id="menu"}
+            <tr class="item" data-id="{$menu.id}" data-level="{$menu._level}">
+                <td>
+                    <div class="input-group">
+                        {if condition="$menu['_level']"}
+                        <span class="input-group-addon level-indicator">
+                        {for start="0" end="$menu['_level']"}
+                        └─
+                        {/for}
+                        </span>
+                        {/if}
+                        <input type="text" class="form-control" value="{$menu.title}" form="menu-form-{$menu.id}"
+                               name="title" required="required"
+                               placeholder="节点名称">
+                        <span class="input-group-btn">
+                            <button class="btn btn-info" onclick="add(this)">+</button>
+                        </span>
+                    </div>
+                </td>
+                <td class="visible-sm visible-md visible-lg"><input type="text" class="form-control" name="url"
+                                                                    value="{$menu.url}"
+                                                                    form="menu-form-{$menu.id}"
+                                                                    placeholder="模块/控制器/操作" required="required"></td>
+                <td class="visible-md visible-lg">
+                    <div class="input-group spinner">
+                        <span class="input-group-btn">
+                            <button class="btn btn-gray" data-type="decrement">-</button>
+                        </span>
+                        <input type="number" class="form-control text-center" name="sort" value="{$menu.sort|default=0}"
+                               form="menu-form-{$menu.id}"
+                               placeholder="排序" min="0">
+                        <span class="input-group-btn">
+                            <button class="btn btn-gray" data-type="increment">+</button>
+                        </span>
+                    </div>
+                </td>
+                <td class="visible-lg">
+                    <div class="input-group icon-picker">
+                        <input type="text" class="form-control" name="icon_class"
+                               value="{$menu.icon_class|default=fa-caret-right}"
+                               form="menu-form-{$menu.id}" placeholder="图标类名">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-gray">
+                                <i class="{$menu.icon_class|default=fa-caret-right}"></i>
+                            </button>
+                        </div>
+                    </div>
+                </td>
+                <td class="hidden-xs">
+                    <label class="checkbox" for="menu-form-{$menu.id}-hide">
+                        {notempty name="menu.hide"}
+                        <input type="checkbox" name="hide" value="1"
+                               form="menu-form-{$menu.id}" checked="checked"
+                               id="menu-form-{$menu.id}-hide">
+                        {else/}
+                        <input type="checkbox" name="hide" value="1"
+                               form="menu-form-{$menu.id}"
+                               id="menu-form-{$menu.id}-hide">
+                        {/notempty}
+                        隐藏
+                    </label>
+                </td>
+                <td>
+                    <form action="{:url('update')}" id="menu-form-{$menu.id}" class="menu-form"
+                          onsubmit="helper.form.submit(this)">
+                        <input type="hidden" name="id" value="{$menu.id}">
+                        <input type="hidden" name="pid" value="{$menu.pid}">
+                        <input type="hidden" name="description" value="{$menu.description}">
+                        <input type="hidden" name="status" value="{$menu.status}">
+                        <input type="hidden" name="is_dev" value="{$menu.is_dev}">
+                        <div class="btn-group">
+                            <button class="btn btn-success">保存</button>
+                            <button type="button" class="btn btn-info" onclick="modify(this)">高级</button>
+                            <button type="button" class="btn btn-danger"
+                                    onclick="helper.form.del('{:url(\'delete\')}')">删除
+                            </button>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<div class="modal-group">
+    <div class="modal fade" id="update-modal" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{:url('update')}" class="menu-form" method="post" onsubmit="helper.form.submit(this)">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title"><span class="action-type">更新</span>菜单</h4>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id" value="0">
+                        <input type="hidden" name="pid" value="{pid}">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="field-1" class="control-label">标题</label>
+                                    <input type="text" class="form-control" id="field-1" name="title"
+                                           placeholder="菜单标题" required="required">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="field-2" class="control-label">地址</label>
+                                    <input type="text" class="form-control" id="field-2" name="url"
+                                           placeholder="模块/控制器/操作" required="required">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-3" class="control-label">图标类名</label>
+                                    <div class="input-group icon-picker">
+                                        <input type="text" class="form-control" id="field-3" name="icon_class"
+                                               placeholder="图标类名">
+                                        <div class="input-group-btn">
+                                            <button class="btn btn-gray" type="button">
+                                                <i class=""></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-4" class="control-label">排序索引</label>
+                                    <div class="input-group spinner">
+                        <span class="input-group-btn">
+                            <button class="btn btn-gray" data-type="decrement">-</button>
+                        </span>
+                                        <input type="number" class="form-control text-center" name="sort" value="0"
+                                               id="field-4"
+                                               placeholder="排序" min="0">
+                                        <span class="input-group-btn">
+                            <button class="btn btn-gray" data-type="increment">+</button>
+                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="field-7" class="control-label">描述</label>
+                                    <textarea class="form-control autogrow" id="field-7"
+                                              placeholder="菜单项描述"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="status-switch">
+                                        启用:
+                                    </label>
+                                    <div>
+                                        <input id="status-switch" type="checkbox" class="iswitch iswitch-success"
+                                               name="status" value="1">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group no-margin">
+                                    <label class="control-label" for="hide-switch">
+                                        隐藏:
+                                    </label>
+                                    <div>
+                                        <input id="hide-switch" type="checkbox" class="iswitch iswitch-info" name="hide"
+                                               value="1">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group no-margin">
+                                    <label class="control-label" for="is_dev-switch">
+                                        仅开发者模式可见:
+                                    </label>
+                                    <div>
+                                        <input id="is_dev-switch" type="checkbox" class="iswitch iswitch-info"
+                                               name="is_dev"
+                                               value="1">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+                        <button class="btn btn-success">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script id="row-tpl" type="text/html">
+    <tr class="item active" data-id="add-{random}" data-level="{level}">
+        <td>
+            <div class="input-group">
+                <span class="input-group-addon level-indicator">{level_indicator}</span>
+                <input type="text" class="form-control" form="menu-form-add-{random}" name="title"
+                       placeholder="节点名称" required="required">
+            </div>
+        </td>
+        <td class="visible-sm visible-md visible-lg"><input type="text" class="form-control" name="url"
+                                                            form="menu-form-add-{random}"
+                                                            placeholder="模块/控制器/操作" required="required"></td>
+        <td class="visible-md visible-lg">
+            <div class="input-group spinner">
+                        <span class="input-group-btn">
+                            <button class="btn btn-gray" data-type="decrement">-</button>
+                        </span>
+                <input type="number" class="form-control text-center" name="sort" value="0"
+                       form="menu-form-add-{random}"
+                       placeholder="排序" min="0">
+                <span class="input-group-btn">
+                            <button class="btn btn-gray" data-type="increment">+</button>
+                        </span>
+            </div>
+        </td>
+        <td class="visible-lg">
+            <div class="input-group icon-picker">
+                <input type="text" class="form-control" name="icon_class" value="fa-caret-right"
+                       form="menu-form-add-{random}"
+                       placeholder="图标类名">
+                <div class="input-group-btn">
+                    <button type="button" class="btn btn-gray">
+                        <i class="fa-caret-right"></i>
+                    </button>
+                </div>
+            </div>
+        </td>
+        <td class="hidden-xs">
+            <label class="checkbox" for="menu-form-add-{random}-hidden">
+                <input type="checkbox" name="hidden" value="1" form="menu-form-add-{random}"
+                       id="menu-form-add-{random}-hidden">
+                隐藏
+            </label>
+        </td>
+        <td>
+            <form action="{:url('update')}" id="menu-form-add-{random}" class="menu-form"
+                  onsubmit="helper.form.submit(this)" method="post">
+                <input type="hidden" name="id" value="0">
+                <input type="hidden" name="pid" value="{pid}">
+                <input type="hidden" name="description" value="">
+                <input type="hidden" name="status" value="1">
+                <input type="hidden" name="is_dev" value="0">
+                <div class="btn-group">
+                    <button class="btn btn-success">保存</button>
+                    <button type="button" class="btn btn-info" onclick="modify(this)">高级</button>
+                    <button type="button" class="btn btn-danger" onclick="helper.form.del('{:url(\'delete\')}')">删除
+                    </button>
+                </div>
+            </form>
+        </td>
+    </tr>
+</script>
+<script>
+    $(".icon-picker").find(":text").bind("keyup", function () {
+        $(this).parent().find("i").prop("class", $(this).val());
+    });
+
+    function modify(button) {
+        helper.form.modify(button);
+        var $modal = $("#update-modal");
+        $modal.find(".icon-picker").find(":text").keyup();
+    }
+
+    function add(button) {
+        var $tr = $(button).closest(".item");
+
+        var tpl = $("#row-tpl").html();
+        var pid = +$tr.find("[name=id]").val() || 0;
+        var level = $tr.data("level");
+        (level === undefined) && (level = -1);
+        var level_indicator = "";
+        for (var i = 0; i <= level; i++)
+            level_indicator += "└─";
+
+        var data = {
+            pid: pid,
+            level: +level + 1,
+            level_indicator: level_indicator,
+            random: parseInt(Math.random() * 100)
+        };
+
+        tpl = helper.tplReplace(data, tpl);
+        var $tpl = $(tpl);
+        if (+data.level === 0) $tpl.find(".level-indicator").remove();
+
+        if (!$tr.length) {
+            $tr = $(button).closest(".panel").find("tbody");
+            $tpl.appendTo($tr);
+        } else {
+            $tr.after($tpl);
+        }
+        if (!helper.inViewport($tpl)) {
+            var top = $tpl.offset().top;
+            var scroll_top = top - document.body.clientHeight + $tpl.height() + 40;
+
+            $("body").scrollTop(scroll_top);
+        }
+        $tpl.find(".form-control:first").focus();
+    }
+</script>
+{/block}

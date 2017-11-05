@@ -1,0 +1,342 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>数据结构</title>
+    <!--<link rel="stylesheet" href="__RES__/css/reset.css" type="text/css" media="screen"/>-->
+    {load href="__STATIC__/jquery/jquery-3.2.1.min.js"}
+    <script type="text/javascript" src="__CDN__/jquery.tablehover.min.js"></script>
+    <style type="text/css" media="screen" id="test">
+        *, html, body, ul, li {
+            padding: 0px;
+            margin: 0px;
+        }
+
+        #box {
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        #box1 {
+            width: 230px;
+            position: fixed;
+            z-index: 1;
+            top: 0px;
+            left: 0px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        #box1 h1 {
+            display: block;
+            float: left;
+            height: 35px;
+            line-height: 35px;
+            font-size: 16px;
+            font-weight: 800;
+            padding-left: 10px;
+            border-left: 4px solid #676767;
+            background-color: #BEBEBE;
+            width: 100%;
+        }
+
+        #box1 ul {
+            width: 100%;
+            display: block;
+            float: left;
+        }
+
+        #box1 li {
+            float: left;
+            height: 32px;
+            line-height: 32px;
+            border-top: 1px solid #f1f1f1;
+            width: 100%
+        }
+
+        #box1 li a {
+            display: inline-block;
+            padding-left: 10px;
+            height: 32px;
+            line-height: 32px;
+            width: 100%;
+            font-size: 14px;
+            text-decoration: none;
+            color: #000000;
+            border-left: 4px solid #C1C3C6;
+            background-color: #DBDCDD;
+        }
+
+        #box1 li a:hover {
+            background-color: #CCCFD1;
+            border-left: 4px solid #ADB0B3
+        }
+
+        #box1 li a.xz {
+            background-color: #CCCFD1;
+            border-left: 4px solid #ADB0B3
+        }
+
+        .help_right {
+            position: absolute;
+            left: 260px;
+            top: 0px; /*width:100%;*/
+        }
+
+        .right_foot {
+            width: 100%;
+            height: 500px;
+        }
+
+        table {
+            width: 100%;
+            margin: 0px auto;
+        }
+
+        td, th {
+            height: 26px;
+            line-height: 26px;
+        }
+
+        th.dataTitle {
+            font-size: 18px;
+            line-height: 32px;
+            height: 32px;
+        }
+
+        .zdbh {
+            color: #0000CC;
+        }
+
+        .zj {
+            color: #cc0000;
+        }
+
+        td.biaotou {
+            border-bottom: 1px solid #999;
+            border-right: 1px solid #DDD;
+            border-left: 1px solid #DDD;
+            border-top: 1px solid #DDD;
+            font-weight: bold;
+            background-color: #FCFCD7;
+            padding: 3px;
+        }
+
+        ul.tableName {
+            float: left;
+            width: 500px;
+        }
+
+        li {
+            float: left;
+            height: 26px;
+            line-height: 26px;
+            display: block;
+        }
+
+        .tableName .commName {
+            font-size: 16px;
+        }
+
+        .tableName .line {
+            font-family: Consolas, sans-serif;
+            width: 50px;
+            color: #999;
+            text-align: center;
+        }
+
+        .tableName .tabName {
+            font-family: Courier, sans-serif;
+            font-size: 18px;
+        }
+
+        .xline {
+            height: 10px;
+        }
+
+        ul.op {
+            float: right;
+            display: block;
+            color: #333;
+            font-weight: 400;
+        }
+
+        .op a {
+            padding: 0px 5px;
+            font-size: 12px;
+            font-weight: 800;
+            color: #333;
+        }
+
+        .tdbody .sql {
+            display: block;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .tdbody .sql input {
+            width: 100%;
+            font-family: Consolas, "Microsoft Yahei", sans-serif;
+        }
+
+        .tdbody table {
+            border: 0;
+            border-top: 1px solid #999;
+            border-left: 1px solid #DDD;
+        }
+
+        .tdbody tr.grey td {
+            color: #F0F0F0
+        }
+
+        .tdbody th {
+            background-color: #f5f5f5;
+            font-size: 12px;
+            padding: 0px 3px;
+            height: 30px;
+            line-height: 30px;
+            border-bottom: 1px solid #DDD;
+            border-right: 1px solid #DDD;
+        }
+
+        .tdbody td {
+            font-size: 14px;
+            padding: 0px 3px;
+            height: 32px;
+            line-height: 32px;
+            border-bottom: 1px solid #DDD;
+            border-right: 1px solid #DDD;
+        }
+
+        .tdbody td.fiel {
+            width: 230px;
+            font-family: Consolas;
+            font-weight: 800;
+            font-size: 16px;
+        }
+
+        .tdbody td.type {
+            width: 180px;
+        }
+
+        .tdbody td.hover {
+            background-color: #B6D6F6;
+        }
+
+        .tdbody td.hovercell {
+            background-color: #99CCFF;
+        }
+
+        .tdbody td.click {
+            background-color: #CCC;
+        }
+
+        .tdbody td.comm {
+        }
+    </style>
+</head>
+<body>
+<div id="box">
+    <div id="box1">
+        <h1>数据表</h1>
+        <ul>
+            {$tabstr}
+        </ul>
+    </div>
+    <div class="help_right" id="rightbox">
+        <table cellspacing="0" cellpadding="0" border="0">
+            <tr>
+                <th class="dataTitle">数据库结构</th>
+            </tr>
+            {$liststr}
+        </table>
+        <div class="right_foot"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    var istype = '';
+    var create_obj = function (tabname, op) {
+        var sql_id = tabname + "_sql";
+        var sql_div = $("#" + sql_id);
+        var tab_obj = $("#" + tabname);
+        if (sql_div.length > 0) {
+            if (istype == '' || op != istype) {
+                istype = op;
+                sql_div.show();
+                return false;
+            } else {
+                istype = '';
+                sql_div.hide();
+            }
+        } else {
+            tab_obj.before('<div class="sql" id="' + sql_id + '"><input type="text" value=""></div>');
+            istype = op;
+            return true;
+        }
+    };
+
+    // 生成查询语句
+    function select_func(tabname) {
+        create_obj(tabname, 'select');
+        var sql_input = $("#" + tabname + "_sql>input");
+        sql_input.val('select * from ' + tabname + ' where 字段名=字段值 order by 字段名 [ASC|DESC]');
+    }
+
+    // 生成插入语句
+    function insert_func(tabname) {
+        create_obj(tabname, 'insert');
+        var sql_input = $("#" + tabname + "_sql>input");
+        sql_input.val('insert into ' + tabname + ' (字段1,字段2,字段3) values (值1,值2,值3)');
+    }
+
+    // 生成更新语句
+    function update_func(tabname) {
+        create_obj(tabname, 'update');
+        var sql_input = $("#" + tabname + "_sql>input");
+        sql_input.val('update ' + tabname + ' set 字段名=字段值 where 条件表达式');
+    }
+
+    // 生成删除语句
+    function delete_func(tabname) {
+        create_obj(tabname, 'delete');
+        var sql_input = $("#" + tabname + "_sql>input");
+        sql_input.val('delete from ' + tabname + ' where 条件表达式');
+    }
+
+    function tools() {
+        var toph = 30;
+        var top = $(document).scrollTop();
+        if (($.browser.msie == true) && ($.browser.version == 6.0)) {
+            if (top > toph) $("#box1").css({position: "absolute", top: top - toph});
+        } else {
+            if (top > toph) $("#box1").css({position: "fixed", top: "-" & top + "px"});
+        }
+        if (top <= toph) $("#box1").css({position: "static", top: 0});
+        //console.log( 'ddd',top );
+    }
+
+    function scroll_fun(wz) {
+        $("html,body").animate({scrollTop: $("#td_" + wz).offset().top}, 500);
+        $("#box1>ul>li>a").removeClass("xz");
+        $("#box1>ul>li#me_" + wz + ">a").toggleClass("xz");
+        return true;
+    }
+
+    $(document).ready(function () {
+        $('.databody').tableHover();
+        //var dh = $(window).height();
+        $("#box1").height($(window).height());
+        $("#rightbox").width($(window).width() - 280);
+    });
+    $(window).scroll(function () {
+        //tools();
+    });
+    $(window).resize(function () {
+        $("#box1").height($(window).height());
+        $("#rightbox").width($(window).width() - 280);
+    });
+</script>
+</body>
+</html>

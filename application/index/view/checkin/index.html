@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=yes,initial-scale=1.0">
+    {load href="__STATIC__/bootstrap4/css/bootstrap.min.css"/}
+    {load href="__CSS__/checkin.min.css"/}
+    {load href="__STATIC__/jquery/jquery-3.2.1.min.js"/}
+    {load href="__STATIC__/bootstrap4/js/bootstrap.min.js"/}
+    {load href="__STATIC__/layer/layer.js"/}
+    <title>活动签到</title>
+</head>
+
+<body>
+<div class="bg"></div>
+<header>
+    <div class="header-container text-center">
+        <figure class="logo">
+            <img src="__IMG__/logo-color.png"/>
+        </figure>
+        <h2 class="h2">社团活动签到</h2>
+        <p class="lead">
+            请填写个人信息完成签到
+        </p>
+    </div>
+</header>
+<main class="center-block">
+    <div class="clearfix">
+        <div class="col-xs-12">
+            <form method="post" action="{:url('save')}" enctype="multipart/form-data" class="form-horizontal"
+                  id="checkin-form" onsubmit="return false;">
+                <input type="hidden" name="hash" value="{:input('hash')}">
+                <fieldset class="form-group">
+                    <div class="col-sm-12">
+                        <input type="text" name="stu_no" max="14" id="stu_no" class="form-control" placeholder="学号"
+                               required="required" pattern="\d{5,12}" autofocus="autofocus"/>
+                    </div>
+                </fieldset>
+                <fieldset class="form-group">
+                    <div class="col-sm-12">
+                        <input type="text" name="class" id="class" class="form-control" placeholder="班级"
+                               required="required"/>
+                    </div>
+                </fieldset>
+                <fieldset class="form-group">
+                    <div class="col-sm-12">
+                        <input type="text" name="name" id="name" class="form-control" placeholder="姓名"
+                               required="required"/>
+                    </div>
+                </fieldset>
+                <fieldset class="form-group">
+                    <div class="col-sm-12">
+                        <div class="select">
+                            <select id="activity" name="activity" class="form-control" required="required" title="请选择活动"
+                                    disabled="disabled">
+                                {notempty name="_activities_list"}
+                                {volist name="_activities_list" id="vo"}
+                                <option value="{$vo.id}">{$vo.name} {$vo.time} @ {$vo.location}
+                                </option>
+                                {/volist}
+                                {else/}
+                                <option value="">当前没有正在进行的活动</option>
+                                {/notempty}
+                            </select>
+                            <i class="caret"></i>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset class="form-group text-center">
+                    <button type="submit" class="btn btn-primary-outline btn-lg" id="checkin-btn">点我签到
+                    </button>
+                </fieldset>
+                <fieldset class="form-group text-center">
+                    <p class="text-muted text-center">签到就意味着您承认社长是帅哥的事实</p>
+                    <a href="{:url('checkin/index?lang=en')}?{:http_build_query(input('param.'))}"
+                       class="btn-link btn text-muted">ENGLISH</a>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</main>
+<footer class="footer">
+    &copy;2015-{:date('Y',time())}&nbsp;<a href="/">网页客研究会</a><br/>社长：帅气的元元
+</footer>
+{load href="__JS__/common.js"/}
+<script type="text/javascript">
+    var CheckInUrl = "{:url('save')}";
+    if (localStorage && localStorage.getItem("webmaster_stu_no")) {
+        $("#name").val(localStorage.getItem("webmaster_name"));
+        $("#stu_no").val(localStorage.getItem("webmaster_stu_no"));
+        $("#class").val(localStorage.getItem("webmaster_class"));
+        $("#checkin-btn").click();
+    }
+    $("#activity").find("[value='" + '{$activity}' + "']").prop("selected", true);
+    $(function () {
+        $("#stu_no").blur(function () {
+            if ($("#stu_no").val() && !$("#name").val())
+                $.ajax({
+                    url: "{:url('getInfo')}",
+                    type: "post",
+                    dataType: "json",
+                    async: true,
+                    data: {stu_no: $(this).val()},
+                    success: function (data) {
+                        $("#name").val(data.msg.name);
+                        $("#class").val(data.msg.class);
+                    }
+                });
+        });
+        $("#checkin-form").submit(function (e) {
+            Activity.checkIn();
+        });
+    });
+</script>
+</body>
+</html>

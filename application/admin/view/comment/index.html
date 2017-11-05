@@ -1,0 +1,147 @@
+{extend name="layout"/} {block name="body"}
+<div class="profile-env">
+    <section class="user-timeline-stories">
+        {volist name="_list|list2tree=###,'id','parent_id'|tree2tree" id="item"}
+        <article class="timeline-story item" data-id="{$item.id}">
+            <i class="fa-paper-plane-empty block-icon"></i>
+            <!-- User info -->
+            <header>
+                <a href="#" class="user-img">
+                    <img src="__IMG__/user-4.png" alt="user-img" class="img-responsive img-circle">
+                </a>
+                <div class="user-details">
+                    <a href="#">{$item.nickname}</a> {$item.email}
+                    <time>{$item.create_time}</time>
+                    <small>{$item.ip}</small>
+                </div>
+            </header>
+            <div class="story-content">
+                <!-- Story Content Wrapped inside Paragraph -->
+                <p>{$item.content|nl2br}</p>
+                <!-- Story Options Links -->
+                <div class="story-options-links">
+                    <a href="javascript:void(0);" onclick="helper.form.del('{:url(\'delete\')}');">
+                        <i class="linecons-trash"></i>
+                        删除
+                    </a>
+                </div>
+                <!-- Story Comments -->
+                <ul class="list-unstyled story-comments">
+                    {volist name="item._child" id="reply"}
+                    <li class="item" data-id="{$reply.id}">
+                        <div class="story-comment">
+                            <a href="#" class="comment-user-img">
+                                <img src="__IMG__/user-4.png" alt="user-img" class="img-circle img-responsive">
+                            </a>
+                            <div class="story-comment-content">
+                                <span class="story-comment-user-name">
+                                    {$reply.nickname} {$reply.email}
+                                    <time>{$reply.create_time}</time>
+                                    <small>{$reply.ip}</small>
+                                    <input type="hidden" name="id" value="{$reply.id}">
+                                    <a href="javascript:void(0);" onclick="helper.form.del('{:url(\'delete\')}');"><i
+                                            class="linecons-trash"></i>删除</a>
+                                </span>
+                                <p>{$reply.content|nl2br}</p>
+                            </div>
+                        </div>
+                    </li>
+                    {/volist}
+                </ul>
+                <form method="post" action="{:url('update')}" class="story-comment-form"
+                      onsubmit="helper.form.submit();">
+                    <input type="hidden" name="parent_id" value="{$item.id}">
+                    <input type="hidden" name="nickname" value="管理员">
+                    <input type="hidden" name="email" value="{$__user.email}">
+                    <textarea class="form-control input-unstyled autogrow" placeholder="回复..." name="content"
+                              style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 58px;"
+                              required="required"></textarea>
+                    <button class="btn btn-primary">保存</button>
+                </form>
+            </div>
+        </article>
+        {/volist}
+    </section>
+</div>
+<div>{:widget('common/paginator/show', [$_list])}</div>
+{/block}{block name="script"}
+<div class="modal-group">
+    <div class="modal fade" id="update-modal" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{:url('update')}" class="form" method="post" onsubmit="helper.form.submit();">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            ×
+                        </button>
+                        <h4 class="modal-title">
+							<span class="action-type">
+								更新
+							</span>
+                            留言
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id">
+                        <input type="hidden" name="parent_id">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-nickname">
+                                        昵称
+                                    </label>
+                                    <input type="text" name="nickname" id="modal-form-nickname" class="form-control"
+                                           required="required" placeholder="昵称">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-email">
+                                        E-Mail
+                                    </label>
+                                    <input type="email" name="email" id="modal-form-email" class="form-control"
+                                           pattern="^([\w\.])+@([\w\.])+$" placeholder="E-Mail" required="required">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-mobile">
+                                        手机号
+                                    </label>
+                                    <input type="text" name="mobile" id="modal-form-mobile" class="form-control"
+                                           placeholder="手机号">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-content">
+                                        留言内容
+                                    </label>
+                                    <textarea name="content" id="modal-form-content" class="form-control"
+                                              required="required" placeholder="留言内容"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">
+                            取消
+                        </button>
+                        <button class="btn btn-success">
+                            保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+</script>
+{/block}

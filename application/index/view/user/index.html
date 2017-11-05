@@ -1,0 +1,78 @@
+{extend name="layout"/}
+{block name="body"}
+<!-- blog -->
+<section class="well-5 cnt-title bg2 user-center">
+    <!-- container -->
+    <div class="container">
+        <!--<h4 class="title">用户中心</h4>-->
+        <!--<p class="sub-title"></p>-->
+        <div class="main clearfix">
+            <div class="col-md-4">
+                <figure class="text-xs-center avatar-wrapper">
+                    <img src="{$_info.avatar}" alt="头像" class="avatar-img img-circle" width="125">
+                    <figcaption>{$_info.email}</figcaption>
+                    <figcaption>{notempty
+                                name="_info.stu_no"}{$_info.stu_no}<br>{$_info.school}<br>{$_info.class}{$_info.name}{/notempty}
+                    </figcaption>
+                </figure>
+            </div>
+            <div class="col-md-8">
+                <div class="user-statistic text-xs-center clearfix">
+                    <div class="col-xs-4"><i
+                            class="fa fa-pencil-square-o"></i><span>签到次数({:count($_info.checkin)})</span>
+                    </div>
+                    <div class="col-xs-4"><i
+                            class="fa fa-paper-plane"></i><span>报名的活动({:$_info->activities()->count()})</span>
+                    </div>
+                    <div class="col-xs-4"><i class="fa fa-user-secret"></i><span>申请的职位({:count($_info.jobs)})</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row m-t-md">
+            <div class="col-md-6">
+                <h4 class="title text-xs-center m-t-md m-b-md">我的活动</h4>
+                {notempty name="_activities_timetable"}
+                <p class="text-primary">这是您报名参与的活动列表，请记得按时参加并签到哦。今日活动已高亮显示，特殊情况的活动已标注。</p>
+                <ul class="list">
+                    {volist name="_activities_timetable" id="day" key="i"}
+                    {assign name="week" value="$key"}
+                    <li>{$week} - {volist name="day" id="item_list" key="j"}
+                        {if condition="get_week(date('N'),false) eq $week"}
+                        <span>{$key}: {volist name="item_list" id="item" key="k"}<strong>{$item.name}&nbsp;@&nbsp;{$item.location}{notempty name="item.pause"}&nbsp;<i
+                                class="label label-default">活动已暂停</i>{/notempty}{if condition="$k neq count($item_list)"}|{/if}</strong>{/volist}</span>
+                        {if condition="$j neq count($day)"},&nbsp;{/if}
+                        {else/}
+                        <span class="text-muted">{$key}: {volist name="item_list" id="item" key="k"}<strong
+                                class="text-muted">{$item.name}&nbsp;@&nbsp;{$item.location}{notempty name="item.pause"}&nbsp;<i
+                                class="label label-default">活动已暂停</i>{/notempty}{if condition="$k neq count($item_list)"}|{/if}</strong>{/volist}</span>
+                        {if condition="$j neq count($day)"},&nbsp;{/if}
+                        {/if}
+                        {/volist}
+                    </li>
+                    {/volist}
+                </ul>
+                {else/}
+                <p class="text-primary">您当前还没有报名参加社团活动，不如去报一个丰富一下课余生活？</p>
+                {/notempty}
+            </div>
+            <div class="col-md-6">
+                <h4 class="title text-xs-center m-t-md m-b-md">社团活动证明</h4>
+                <p class="text-primary">社团活动证明只有在累计签到次数≥1次时才能申请，条件满足后自行下载打印生成的证明文件。</p>
+                {if condition="count($_info->checkin) egt 1"}
+                <div class="alert alert-warning">点击如下按钮下载学分证明。感谢您积极参与我们的社团活动。</div>
+                <a href="{:url('printProof')}" target="_blank" class="btn btn-primary m-r-md"><span class="btn-icon"><i
+                        class="fa fa-print"></i></span>打印社团活动证明
+                </a><a href="{:url('downloadProof')}" target="_blank" class="btn btn-primary"><span class="btn-icon"><i
+                        class="fa fa-download"></i></span>下载社团活动证明
+                </a>
+                {else/}
+                <div class="alert alert-danger">您当前累计签到次数为{:count($_info->checkin)}次，还未达到申请条件，请努力多多参与社团活动吧。</div>
+                {/if}
+            </div>
+        </div>
+    </div>
+</section>
+{/block}
+{block name="script"}
+{/block}

@@ -1,0 +1,50 @@
+{extend name="layout"/}
+{block name="body"}
+<!-- blog -->
+<section class="well-11 bg2">
+    <!-- container -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <ul class="blog-list">
+                    {notempty name="_list"}
+                    {volist name="_list" id="vo"}
+                    <li class="clearfix">
+                        {notempty name="vo.cover_img"}
+                        <a href="{:url('BlogRead?id='.$vo['id'])}"><img src="{$vo.cover_img}" alt="{$vo.title}"></a>
+                        {/notempty}
+                        <div class="blog-list_header col-xs-12">
+                            <div class="blog-list_header_top-block">
+                                <h6><a href="{:url('BlogRead?id='.$vo['id'])}">{$vo.title}</a></h6>
+                            </div>
+                            <div class="blog-list_header_bottom-block">
+                                <p class="post-by">由 <a href="#">{$vo.user.email}</a> 发表于
+                                    <time datetime="{$vo.create_time}">{$vo.create_time}</time>
+                                </p>
+                                <p class="comments"><a href="{:url('BlogRead?id='.$vo['id'])}#comment">
+                                    {$vo.comment_count} 条评论</a></p>
+                            </div>
+                            <p><a href="{:url('BlogRead?id='.$vo['id'])}">{$vo.brief}</a></p>
+                            <a class="btn2" href="{:url('BlogRead?id='.$vo['id'])}"><span
+                                    class="btn2_icon fa fa-file-text-o"></span>阅读全文</a>
+                        </div>
+                    </li>
+                    {/volist}
+                    {else/}
+                    <li class="text-center">
+                        <h3>暂时还没有文章被发表</h3>
+                    </li>
+                    {/notempty}
+                </ul>
+                <div class="text-center">
+                    {$_list->render()}
+                </div>
+            </div>
+            <div class="col-md-4">
+                {include file="_layout/blog_nav"/}
+            </div>
+        </div>
+    </div>
+</section>
+<!-- //container -->
+{/block}

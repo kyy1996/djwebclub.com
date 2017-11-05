@@ -1,0 +1,338 @@
+{extend name="layout"/}
+{block name="body"}
+<section class="panel panel-default">
+    <div class="panel-body form-horizontal">
+        <h2 class="text-center">
+            上端滚动横幅
+        </h2>
+        <div class="form-group">
+            <div class="col-md-8 col-md-push-2">
+                <figure class="img-uploader-wrapper" style="width: 100%;">
+                    <img src="{$_info.welcome_img}" class="welcome_img" alt="" width="200"
+                         onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAYAAAD0In+KAAAAC0lEQVQYV2NkgAIAABIAAibpyBYAAAAASUVORK5CYII='">
+                    <input type="file" data-name="welcome_img" class="form-control img-file-input uploader-file"
+                           data-title="顶部背景图片" onchange="helper.imageInputChange()">
+                    <input type="hidden" name="welcome_img" value="{$_info.welcome_img}" form="update-form">
+                </figure>
+            </div>
+        </div>
+        <table class="table table-hover middle-align text-center">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>标题</th>
+                <th>副标题</th>
+                <th>索引</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="_banner_text" id="vo"}
+            <tr class="item" data-id="{vo.id}">
+                <td>
+                    <p class="form-control-static">{$vo.id} </p>
+                    <input type="hidden" name="id" value="{$vo.id}" form="form-{$vo.id}">
+                </td>
+                <td>
+                    <input type="text" name="title" form="form-{$vo.id}" class="form-control" required="required"
+                           value="{$vo.title}" placeholder="标题">
+                </td>
+                <td>
+                    <input type="text" name="subtitle" form="form-{$vo.id}" class="form-control" required="required"
+                           value="{$vo.subtitle}" placeholder="副标题">
+                </td>
+                <td>
+                    <div class="input-group spinner">
+                        <span class="input-group-btn">
+                            <button class="btn btn-gray" data-type="decrement">-</button>
+                        </span>
+                        <input type="number" name="index" value="{$vo.index}" form="form-{$vo.id}"
+                               class="form-control text-center" placeholder="排序索引" step="1">
+                        <span class="input-group-btn">
+                            <button class="btn btn-gray" data-type="increment">+</button>
+                        </span>
+                    </div>
+                </td>
+                <td>
+                    <input type="hidden" name="content" form="form-{$vo.id}"
+                           value="{$vo.content}">
+                    <input type="hidden" name="button_white" form="form-{$vo.id}"
+                           value="{$vo.button_white}">
+                    <input type="hidden" name="button_red" form="form-{$vo.id}"
+                           value="{$vo.button_red}">
+                    <form action="{:url('updateBanner')}" id="form-{$vo.id}" onsubmit="helper.form.submit()">
+                        <div class="btn-group">
+                            <button class="btn btn-success">
+                                保存
+                            </button>
+                            <button type="button" class="btn btn-info"
+                                    onclick="helper.form.modify(this,$('#banner-update-modal'))">
+                                修改
+                            </button>
+                            <button type="button" class="btn btn-danger"
+                                    onclick="helper.form.del('{:url(\'delBanner\')}')">
+                                删除
+                            </button>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="5">
+                    <button type="button" class="btn btn-success"
+                            onclick="helper.form.modify(null,$('#banner-update-modal'))">添加
+                    </button>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+</section>
+<section class="panel panel-default">
+    <div class="panel-body form-horizontal">
+        <h2 class="text-center">
+            欢迎信息设置
+        </h2>
+        <div class="form-group">
+            <label class="col-lg-2 col-md-2 control-label" for="welcome_title">“欢迎”标题</label>
+            <div class="col-lg-10 col-md-10">
+                <input type="text" class="form-control" name="welcome_title" id="welcome_title" form="update-form"
+                       value="{$_info.welcome_title}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 col-md-2 control-label" for="welcome_subtitle">“欢迎”副标题</label>
+            <div class="col-lg-10 col-md-10">
+                <input type="text" class="form-control" name="welcome_subtitle" id="welcome_subtitle" form="update-form"
+                       value="{$_info.welcome_subtitle}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 col-md-2 control-label" for="welcome_text">内容</label>
+            <div class="col-lg-10 col-md-10">
+                <textarea class="form-control" name="welcome_text" rows="5" form="update-form" id="welcome_text">{$_info.welcome_text}</textarea>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="panel panel-default">
+    <div class="panel-body form-horizontal">
+        <h2 class="text-center">
+            底部横幅信息
+        </h2>
+        <div class="form-group">
+            <div class="col-sm-8 col-sm-push-2">
+                <figure class="img-uploader-wrapper" style="width: 100%;">
+                    <img src="{$_info.bottom_banner_img}" class="bottom_banner_img" alt="" width="200"
+                         onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAYAAAD0In+KAAAAC0lEQVQYV2NkgAIAABIAAibpyBYAAAAASUVORK5CYII='">
+                    <input type="file" data-name="bottom_banner_img" class="form-control img-file-input uploader-file"
+                           data-title="底部背景图片" onchange="helper.imageInputChange()">
+                    <input type="hidden" name="bottom_banner_img" value="{$_info.bottom_banner_img}" form="update-form">
+                </figure>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 col-md-2 control-label" for="bottom_banner_title">标题</label>
+            <div class="col-lg-10 col-md-10">
+                <input type="text" class="form-control" name="bottom_banner_title" id="bottom_banner_title"
+                       form="update-form" value="{$_info.bottom_banner_title}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 col-md-2 control-label" for="bottom_banner_text">内容</label>
+            <div class="col-lg-10 col-md-10">
+                <textarea class="form-control" name="bottom_banner_text" rows="5" form="update-form"
+                          id="bottom_banner_text">{$_info.bottom_banner_text}</textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 col-md-2 control-label" for="bottom_banner_text_background">文本背景颜色</label>
+            <div class="col-lg-1 col-md-2">
+                <input type="color" class="form-control" name="bottom_banner_text_background" form="update-form"
+                       id="bottom_banner_text_background" value="{$_info.bottom_banner_text_background}">
+            </div>
+        </div>
+    </div>
+</section>
+<form action="{:url('updateIndex')}" method="post" onsubmit="helper.form.submit()" id="update-form">
+    <button class="btn btn-success">保存</button>
+</form>
+{/block}
+{block name="script"}
+<div class="modal-group">
+    <div class="modal fade" id="banner-update-modal" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{:url('updateBanner')}" class="form" method="post" onsubmit="helper.form.submit();">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            ×
+                        </button>
+                        <h4 class="modal-title">
+                            <span class="action-type">修改</span>
+                            Banner
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-id">
+                                        ID
+                                    </label>
+                                    <p class="form-control-static" data-name="id" id="modal-form-id"></p>
+                                    <input type="hidden" name="id" value="1">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-title">
+                                        标题
+                                    </label>
+                                    <input type="text" name="title" id="modal-form-title" class="form-control"
+                                           required="required" placeholder="标题">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-subtitle">
+                                        副标题
+                                    </label>
+                                    <input type="text" name="subtitle" id="modal-form-subtitle" class="form-control"
+                                           placeholder="副标题">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-index">
+                                        排序索引
+                                    </label>
+                                    <div class="input-group spinner">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-gray" data-type="decrement">-</button>
+                                        </span>
+                                        <input type="number" name="index" value="0" class="form-control text-center"
+                                               id="modal-form-index" placeholder="排序索引" step="1">
+                                        <span class="input-group-btn">
+                                        <button class="btn btn-gray" data-type="increment">+</button>
+                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-content">
+                                        内容
+                                    </label>
+                                    <textarea name="content" id="modal-form-content" class="form-control"
+                                              placeholder="内容"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-button_white">
+                                        白色按钮链接
+                                    </label>
+                                    <input type="text" name="button_white" id="modal-form-button_white"
+                                           class="form-control" placeholder="白色按钮链接">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-button_red">
+                                        红色按钮链接
+                                    </label>
+                                    <input type="text" name="button_red" id="modal-form-button_red"
+                                           class="form-control" placeholder="红色按钮链接">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">
+                            取消
+                        </button>
+                        <button class="btn btn-success">
+                            保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="advance-tpl">
+    <div class="col-md-4 text-center item">
+        <input type="text" name="advance[title][]" class="form-control" placeholder="名称" required="required"
+               value="">
+        <textarea name="advance[content][]" rows="5" placeholder="介绍"
+                  class="form-control"></textarea>
+        <input type="text" name="advance[more][]" class="form-control" placeholder="更多页面地址"
+               value="">
+        <div class="btn-group">
+            <button class="btn btn-danger" type="button" onclick="delItem()">
+                删除
+            </button>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="team-tpl">
+    <div class="col-md-4 item">
+        <div class="media">
+            <div class="media-left pull-left">
+                <figure class="img-uploader-wrapper media-object img-circle"
+                        style="width: 128px;height: 128px;overflow: hidden;">
+                    <img src="__IMG__/user-4.png" class="team[photo][]" alt=""
+                         width="200"
+                         onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAYAAAD0In+KAAAAC0lEQVQYV2NkgAIAABIAAibpyBYAAAAASUVORK5CYII='">
+                    <input type="file" data-name="team[photo][]"
+                           class="form-control img-file-input uploader-file"
+                           data-title="顶部图片" onchange="helper.imageInputChange();OSSHelper.uploadHandler(event)">
+                    <input type="hidden" name="team[photo][]" value="">
+                </figure>
+                <div class="text-center media-info">
+                    <input type="text" name="team[name][]" placeholder="成员名称" value="" required="required"
+                           class="form-control">
+                </div>
+            </div>
+            <div class="media-body">
+                <textarea name="team[brief][]" rows="5" placeholder="成员介绍" class="form-control"></textarea>
+                <input type="text" name="team[more][]" value="" class="form-control"
+                       placeholder="更多页面地址">
+            </div>
+            <div class="media-right pull-right">
+                <button type="button" class="btn btn-danger" onclick="delItem()">删除
+                </button>
+            </div>
+        </div>
+    </div>
+</script>
+{load href="http://gosspublic.alicdn.com/aliyun-oss-sdk-4.4.4.min.js"}
+{load href="__STATIC__/Common/js/OSSHelper.js"}
+<script>
+    function add(name) {
+        var $target = $("#" + name + "-wrapper");
+        var tpl = $("#" + name + "-tpl").html();
+        $(tpl).appendTo($target);
+    }
+
+    function delItem() {
+        helper.remove($(event.target).closest(".item"));
+    }
+</script>
+{/block}

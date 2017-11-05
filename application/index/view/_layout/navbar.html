@@ -1,0 +1,40 @@
+<button type="button" class="navbar-toggler btn-primary"><i class="fa fa-bars"></i>
+</button>
+<nav class="nav">
+    <ul class="list-unstyled sf-menu">
+        <li data-controller="index" data-action="index"><a href="{:url('index/index')}">主页</a></li>
+        <li data-controller="blog" data-action=""><a href="{:url('blog/index')}">部落格</a></li>
+        <li data-controller="gallery" data-action="index"><a href="{:url('gallery/index')}">画廊</a></li>
+        <li data-controller="activity" data-action="index"><a href="{:url('activity/index')}">社团活动</a></li>
+        <li data-controller="joinus" data-action="index"><a href="{:url('join_us/index')}">招募令</a></li>
+        <li data-controller="comment" data-action="index"><a href="{:url('comment/index')}">留言板</a></li>
+        <li data-controller="index" data-action="about"><a href="{:url('index/about')}">关于</a></li>
+        {empty name="_user"}
+        <li data-controller="user"><a href="{:url('user/login')}">会员登录</a></li>
+        {else/}
+        <li data-controller="user"><a href="{:url('user/index')}">会员中心</a></li>
+        <li><a href="javascript:logout();">注销</a></li>
+        {notempty name="_user.user_groups"}
+        <li><a href="//admin.djwebclub.com" target="_blank">管理</a></li>
+        {/notempty}
+        {/empty}
+    </ul>
+</nav>
+<script type="text/javascript">
+    var controller = "{:strtolower(request()->controller())}";
+    var action     = "{:strtolower(request()->action())}";
+    $("[data-controller=" + controller + "]", ".nav").each(function () {
+        if (!$(this).data("action") || $(this).data("action") === action) {
+            $(this).addClass("active");
+        }
+    });
+    $(".navbar-toggler").click(function () {
+        $(".nav").toggleClass("active");
+    });
+
+    function logout() {
+        helper.post("{:url('user/logout')}", [], function (data) {
+            location.href = data.url;
+        });
+    }
+</script>

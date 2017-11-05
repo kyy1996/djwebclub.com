@@ -1,0 +1,186 @@
+{extend name="layout"/}
+{block name="body"}
+<div class="panel panel-default">
+    <div class="panel-body">
+        <table class="table table-hover middle-align text-center">
+            <thead>
+            <tr>
+                <th>id</th>
+                <th>文章标题</th>
+                <th>昵称</th>
+                <th>E-Mail</th>
+                <th>评论时间</th>
+                <th>IP</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="_list" id="item"}
+            <tr class="item" data-id="{$item.id}">
+                <td>
+                    <p class="form-control-static" data-name="id">
+                        {$item.id}
+                    </p>
+                    <input type="hidden" name="id" value="{$item.id}" form="form-{$item.id}">
+                </td>
+                <td>
+                    <p class="form-control-static" data-name="blog_id">
+                        {$item.blog->title}
+                    </p>
+                    <input type="hidden" name="blog_id" value="{$item.blog_id}" form="form-{$item.id}">
+                </td>
+                <td>
+                    <p class="form-control-static" data-name="nickname">
+                        {$item.nickname}
+                    </p>
+                    <input type="hidden" name="nickname" value="{$item.nickname}" form="form-{$item.id}">
+                </td>
+                <td>
+                    <p class="form-control-static" data-name="email">
+                        {$item.email}
+                    </p>
+                    <input type="hidden" name="email" value="{$item.email}" form="form-{$item.id}">
+                </td>
+                <td>
+                    <p class="form-control-static" data-name="time">
+                        {$item.create_time}
+                    </p>
+                    <input type="hidden" name="create_time" value="{$item.create_time}" form="form-{$item.id}">
+                </td>
+                <td>
+                    <p class="form-control-static" data-name="ip">
+                        {$item.ip}
+                    </p>
+                    <input type="hidden" name="ip" value="{$item.ip}" form="form-{$item.id}">
+                </td>
+                <td>
+                    <input type="hidden" name="parent_id" value="{$item.parent_id}" form="form-{$item.id}">
+                    <input type="hidden" name="uid" value="{$item.uid}" form="form-{$item.id}">
+                    <input type="hidden" name="content" value="{$item.content}" form="form-{$item.id}">
+                    <form action="{:url('update')}" id="form-{$item.id}" onsubmit="helper.form.submit()">
+                        <div class="btn-group">
+                            <button class="btn btn-success">
+                                保存
+                            </button>
+                            <button type="button" class="btn btn-info" onclick="helper.form.modify(this)">
+                                修改
+                            </button>
+                            <button type="button" class="btn btn-danger"
+                                    onclick="helper.form.del('{:url(\'delete\')}')">
+                                删除
+                            </button>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+        <div>{:widget('common/paginator/show', [$_list])}</div>
+    </div>
+</div>
+{/block} {block name="script"}
+<div class="modal-group">
+    <div class="modal fade" id="update-modal" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{:url('update')}" class="form" method="post" onsubmit="helper.form.submit();">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            ×
+                        </button>
+                        <h4 class="modal-title">
+							<span class="action-type">
+								更新
+							</span>
+                            文章评论
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-blog_id">
+                                        文章标题
+                                    </label>
+                                    <p class="form-control-static" data-name="blog_id" id="modal-form-blog_id">
+                                    </p>
+                                    <input type="hidden" name="blog_id">
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="parent_id">
+                        <input type="hidden" name="uid">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-nickname">
+                                        昵称
+                                    </label>
+                                    <p class="form-control-static" data-name="nickname" id="modal-form-nickname">
+                                    </p>
+                                    <input type="hidden" name="nickname">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-email">
+                                        E-Mail
+                                    </label>
+                                    <p class="form-control-static" data-name="email" id="modal-form-email">
+                                    </p>
+                                    <input type="hidden" name="email">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-content">
+                                        内容
+                                    </label>
+                                    <p class="form-control-static" data-name="content" id="modal-form-content">
+                                    </p>
+                                    <input type="hidden" name="content">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-create_time">
+                                        评论时间
+                                    </label>
+                                    <p class="form-control-static" data-name="create_time" id="modal-form-create_time">
+                                    </p>
+                                    <input type="hidden" name="create_time">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-ip">
+                                        IP
+                                    </label>
+                                    <p class="form-control-static" data-name="ip" id="modal-form-ip">
+                                    </p>
+                                    <input type="hidden" name="ip">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">
+                            关闭
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}

@@ -1,0 +1,49 @@
+{extend name="layout"/}
+{block name="body"}
+<div class="panel panel-default">
+    <div class="panel-body">
+        <form action="{:url('update')}" method="post" onsubmit="helper.form.submit()" class="form-horizontal">
+            <div class="form-group">
+                <label for="website-title" class="control-label col-sm-4 col-md-2">网站名称</label>
+                <div class="col-sm-8 col-md-10"><input type="text" class="form-control" id="website-title"
+                                                       placeholder="网站标题" name="website_title"
+                                                       value="{$_config.website_title}"></div>
+            </div>
+            <div class="form-group">
+                <label for="website-email" class="control-label col-sm-4 col-md-2">E-Mail</label>
+                <div class="col-sm-8 col-md-10"><input type="text" class="form-control" id="website-email"
+                                                       placeholder="E-Mail" name="website_email"
+                                                       value="{$_config.website_email}"></div>
+            </div>
+            <div class="form-group">
+                <label for="website-mobile" class="control-label col-sm-4 col-md-2">手机号/附加信息</label>
+                <div class="col-sm-8 col-md-10"><input type="text" class="form-control" id="website-mobile"
+                                                       placeholder="手机号/附加信息" name="website_mobile"
+                                                       value="{$_config.website_mobile}"></div>
+            </div>
+            <div class="form-group">
+                <label for="qq" class="control-label col-sm-4 col-md-2">QQ</label>
+                <div class="col-sm-8 col-md-10"><input type="text" class="form-control" id="qq"
+                                                       placeholder="QQ" name="qq"
+                                                       value="{$_config.qq}"></div>
+            </div>
+            <div class="form-group">
+                <label for="website-address" class="control-label col-sm-4 col-md-2">地址</label>
+                <div class="col-sm-8 col-md-10"><input type="text" class="form-control" id="website-address"
+                                                       placeholder="地址" name="website_address"
+                                                       value="{$_config.website_address}"></div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-12">
+                    <button class="btn btn-success btn-single">保存</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script>
+    helper.setPk("name");
+</script>
+{/block}

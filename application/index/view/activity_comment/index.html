@@ -1,0 +1,50 @@
+<form action="{:url('save')}" id="comment-form" onsubmit="return false">
+    <fieldset>
+        <legend>我有话说</legend>
+        <div class="form-group">
+            <p class="text-left">
+                现有的活动不能满足你？欢迎向我们反馈！
+            </p>
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" name="nickname" id="nickname" title="昵称" placeholder="昵称"
+                   required="required">
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" name="contact" id="contact" title="QQ" placeholder="QQ"
+                   required="required">
+        </div>
+        <div class="form-group">
+            <textarea name="content" id="content" cols="30" rows="10" class="form-control"
+                      placeholder="您的意见或建议" required="required"></textarea>
+        </div>
+        <div>
+            <button class="btn btn-success-outline" type="submit">提交</button>
+            <button class="btn btn-secondary-outline" type="button" onclick="layer.closeAll();">取消</button>
+        </div>
+    </fieldset>
+</form>
+<script>
+    if (localStorage && localStorage.webmaster_class) {
+        $("#nickname").val(localStorage.webmaster_class + localStorage.webmaster_name);
+        $("#contact").val(localStorage.webmaster_contact);
+    }
+    $("#comment-form").submit(function (e) {
+        $.ajax({
+            url: e.target.action,
+            data: $(this).serialize(),
+            dataType: "json",
+            type: "post",
+            success: function (data) {
+                if (data.code) {
+                    layer.msg(data.msg);
+                } else {
+                    layer.msg(data.msg, {shift: 6});
+                    setTimeout(function () {
+                        layer.closeAll();
+                    }, 3000);
+                }
+            }
+        });
+    });
+</script>

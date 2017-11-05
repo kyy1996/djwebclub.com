@@ -1,0 +1,273 @@
+{extend name="layout"/}
+{block name="style"}
+<style>
+    .form-control {
+        transition-property: all;
+    }
+
+    td {
+        transition-duration: 300ms;
+    }
+</style>
+{/block}
+{block name="body"}
+<form action="{:url('preview')}" method="post" class="form-horizontal">
+    <div class="form-group">
+        <label class="col-sm-1 control-label" for="table_prefix">表前缀</label>
+        <div class="col-sm-2">
+            <input type="text" id="table_prefix" name="table_prefix" value="{$_table.prefix}" class="form-control">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-1 control-label" for="module[name]">
+            模块名
+        </label>
+        <div class="col-xs-2">
+            <input type="text" class="form-control" placeholder="模块名" value="{$Request.param.database|strtolower}"
+                   name="module[name]" id="module[name]">
+        </div>
+        <label class="col-xs-1 control-label" for="controller[name]">
+            控制器名
+        </label>
+        <div class="col-xs-2">
+            <input type="text" class="form-control" placeholder="控制器名" value="{$_table.name|toCamelCase}"
+                   name="controller[name]" id="controller[name]">
+        </div>
+        <label class="col-xs-1 control-label" for="controller[title]">
+            控制器标题
+        </label>
+        <div class="col-xs-2">
+            <input type="text" class="form-control" placeholder="控制器标题" value="{$_table.name|toCamelCase}"
+                   name="controller[title]" id="controller[title]">
+        </div>
+        <label class="col-xs-1 control-label" for="model">
+            模型名称
+        </label>
+        <div class="col-xs-2">
+            <input type="text" class="form-control" placeholder="模型名称" value="{$_table.name|toCamelCase}"
+                   name="model" id="model">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel">
+                <div class="panel-body no-padding">
+                    <table class="table table-hover table-striped text-center">
+                        <thead>
+                        <tr>
+                            <th>生成</th>
+                            <th>字段/主键标记</th>
+                            <th>类型</th>
+                            <th>附加设置</th>
+                            <th>别名</th>
+                            <th>占位符说明</th>
+                            <th>显示区</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {volist name="_columns" id="column"}
+                        <tr>
+                            <td>
+                                <label class="form-control-static"><input type="checkbox" name="column[]"
+                                                                          value="{$column.Field}" title="生成"
+                                                                          class="iswitch iswitch-success"
+                                                                          checked="checked"></label>
+                            </td>
+                            <td>
+                                <p class="form-control-static">
+                                    <label>
+                                        {if condition="strpos($column['Extra'],'auto_increment') !== false"}
+                                        <input type="radio" name="key" value="{$column.Field}" checked="checked"
+                                               class="cbr cbr-success">
+                                        {else/}
+                                        <input type="radio" name="key" value="{$column.Field}" class="cbr cbr-success">
+                                        {/if}
+                                        {$column.Field}
+                                    </label>
+                                </p>
+                            </td>
+                            <td>
+                                <select name="field[{$column.Field}][type]" title="输入框类型"
+                                        class="form-control form-input-type-select">
+                                    <option value="text" data-options="length,pattern">文本域</option>
+                                    <option value="password" data-options="length,pattern">密码域</option>
+                                    {if condition="strpos($column['Key'],'PRI') !== false"}
+                                    <option value="hidden" selected="selected">隐藏域</option>
+                                    {else/}
+                                    <option value="hidden">隐藏域</option>
+                                    {/if}
+                                    <option value="number" data-options="min,max,length,pattern">数字域</option>
+                                    <option value="select" data-options="options">选择框</option>
+                                    <option value="radio" data-options="options">单选框</option>
+                                    <option value="switch">开关</option>
+                                    <option value="checkbox" data-options="options">复选框</option>
+                                    <option value="textarea" data-options="pattern">文本框域</option>
+                                    <option value="tel" data-options="pattern">电话域</option>
+                                    <option value="datetime-local">日期时间域</option>
+                                    <option value="color">颜色域</option>
+                                    <option value="file">文件域</option>
+                                    <option value="img">图片域</option>
+                                    <option value="email" data-options="pattern">E-Mail域</option>
+                                    <option value="url" data-options="pattern">URL域</option>
+                                </select>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label>
+                                        必填
+                                        {if condition="$column['Null'] == 'YES'"}
+                                        <input type="checkbox" name="field[{$column.Field}][type_option][required]"
+                                               checked="checked" class="iswitch iswitch-primary">
+                                        {else/}
+                                        <input type="checkbox" name="field[{$column.Field}][type_option][required]"
+                                               class="iswitch iswitch-primary">
+                                        {/if}
+                                    </label>
+                                    <label>
+                                        搜索字段
+                                        {if condition="$column['Key'] == 'PRI'"}
+                                        <input type="checkbox" name="field[{$column.Field}][search]"
+                                               class="iswitch iswitch-primary">
+                                        {else/}
+                                        <input type="checkbox" name="field[{$column.Field}][search]"
+                                               checked="checked" class="iswitch iswitch-primary">
+                                        {/if}
+                                    </label>
+                                </div>
+                                <input type="number" name="field[{$column.Field}][type_option][min]"
+                                       class="form-control form-input-type-options" id="{$column.Field}-type-option-min"
+                                       placeholder="最小值">
+                                <input type="number" name="field[{$column.Field}][type_option][max]"
+                                       class="form-control form-input-type-options" id="{$column.Field}-type-option-max"
+                                       placeholder="最大值">
+                                <input type="number" name="field[{$column.Field}][type_option][step]"
+                                       class="form-control form-input-type-options"
+                                       id="{$column.Field}-type-option-step" placeholder="步进">
+                                <input type="text" name="field[{$column.Field}][type_option][length]"
+                                       pattern="(\d+,){0,1}\d+" class="form-control form-input-type-options"
+                                       id="{$column.Field}-type-option-length" placeholder="长度范围，逗号分隔">
+                                <input type="text" name="field[{$column.Field}][type_option][pattern]"
+                                       class="form-control form-input-type-options"
+                                       id="{$column.Field}-type-option-pattern" placeholder="正则模式">
+                                <textarea name="field[{$column.Field}][type_option][options]"
+                                          class="form-control form-input-type-options"
+                                          id="{$column.Field}-type-option-options" placeholder="选项列表，选项名:选项值，换行分隔选项"
+                                          rows="10"></textarea>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" placeholder="别名"
+                                       name="field[{$column.Field}][alias]" value="{$column.Comment}">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" placeholder="占位符说明"
+                                       name="field[{$column.Field}][placeholder]" value="{$column.Comment}">
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label class="form-control-static">
+                                        表格输入框
+                                        <input type="radio" name="field[{$column.Field}][position][table]"
+                                               value="input"
+                                               class="cbr cbr-info" checked="checked">
+                                    </label>
+                                    <label class="form-control-static">
+                                        表格静态
+                                        {if condition="strpos($column['Key'],'PRI') !== false"}
+                                        <input type="radio" name="field[{$column.Field}][position][table]"
+                                               value="static" class="cbr cbr-info" checked="checked">
+                                        {else/}
+                                        <input type="radio" name="field[{$column.Field}][position][table]"
+                                               value="static" class="cbr cbr-info">
+                                        {/if}
+                                    </label>
+                                    <label class="form-control-static">
+                                        表格隐藏
+                                        <input type="radio" name="field[{$column.Field}][position][table]"
+                                               value="hide" class="cbr cbr-info">
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-control-static">
+                                        模态框输入框
+                                        <input type="radio" name="field[{$column.Field}][position][modal]" value="input"
+                                               class="cbr cbr-info" checked="checked">
+                                    </label>
+                                    <label class="form-control-static">
+                                        模态框静态
+                                        {if condition="strpos($column['Key'],'PRI') !== false"}
+                                        <input type="radio" name="field[{$column.Field}][position][modal]"
+                                               value="static" class="cbr cbr-info" checked="checked">
+                                        {else/}
+                                        <input type="radio" name="field[{$column.Field}][position][modal]"
+                                               value="static" class="cbr cbr-info">
+                                        {/if}
+                                    </label>
+                                    <label class="form-control-static">
+                                        模态框隐藏
+                                        <input type="radio" name="field[{$column.Field}][position][modal]"
+                                               value="hide" class="cbr cbr-info">
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+                        {/volist}
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td colspan="7">
+                                <div class="form-inline form-group">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <label class="form-control-static">启用layout<input type="checkbox"
+                                                                                              class="iswitch iswitch-info"
+                                                                                              name="layout[status]"></label>
+                                        </div>
+                                        <label for="layout[name]" class="control-label">布局名称</label>
+                                        <input type="text" class="form-control" placeholder="layout名称" value="layout"
+                                               name="layout[name]" id="layout[name]">
+                                        <label class="control-label" for="template">
+                                            代码模板
+                                        </label>
+                                        <select name="template" id="template" class="form-control" required="required">
+                                            {volist name="_template" id="template"}
+                                            <option value="{$template}">{$template}</option>
+                                            {/volist}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <input type="hidden" name="database" value="{$Request.param.database}">
+                                    <input type="hidden" name="table" value="{$Request.param.table}">
+                                    <button class="btn btn-success">生成CURD并预览</button>
+                                    <button type="button" class="btn btn-warning" onclick="history.back()">返回</button>
+                                </div>
+                            </td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{/block}
+{block name="script"}
+<script>
+    $(function () {
+        $(".form-input-type-select").change(function (e) {
+            var option = e.target.selectedOptions[0];
+            var options = $(option).data("options") || "";
+            options = options.split(",");
+            var $tr = $(this).closest("tr");
+            $tr.find(".form-input-type-options").val("").hide();
+            options.forEach(function (option) {
+                $tr.find("[name$='[" + option + "]']").show();
+            });
+        }).change();
+
+        $("input:checkbox[name='column[]']").change(function () {
+            $(this).closest("tr").find("input,textarea,select").not(this).prop("disabled", !$(this).prop("checked"));
+        });
+    });
+</script>
+{/block}

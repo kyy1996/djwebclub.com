@@ -1,0 +1,138 @@
+{extend name="layout"/}
+{block name="body"}
+<section class="gallery-env">
+    <div class="row">
+        <div class="col-xs-12 gallery-right">
+            <!-- Album Header -->
+            <div class="album-header">
+                <!--<h2>General</h2>-->
+                <ul class="album-options list-unstyled list-inline pull-left">
+                    <li>
+                        <input type="checkbox" class="cbr" id="select-all"/>
+                        <label for="select-all">全选</label>
+                    </li>
+                    <li>
+                        <a href="#" onclick="helper.form.modify()">
+                            <i class="fa-upload"></i>
+                            上传图片
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-action="trash" onclick="batchDelete()">
+                            <i class="fa-trash"></i>
+                            删除
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <!-- Album Images -->
+            <div class="album-images">
+                <!-- Album Image -->
+                {volist name="_list" id="item"}
+                <div class="item" data-id="{$item.id}">
+                    <div class="album-image">
+                        <input type="hidden" name="id" value="{$item.id}">
+                        <input type="hidden" name="title" value="{$item.title}">
+                        <input type="hidden" name="class_name" value="{$item.class_name}">
+                        <input type="hidden" name="url" value="{$item.url}">
+                        <a href="javascript:void(0);" class="thumb" data-action="edit"
+                           onclick="helper.form.modify(this)">
+                            <img src="{$item.url}" class="img-responsive"/>
+                        </a>
+                        <span href="#" class="name">
+                            <span><small class="text-muted">[{$item.class_name}]</small>{$item.title}</span>
+                            <em>{$item.create_time}</em>
+                        </span>
+                        <div class="image-options">
+                            <a href="#" data-action="edit"
+                               onclick="helper.form.modify(this)"><i class="fa-pencil"></i></a>
+                            <a href="#" data-action="trash" onclick="helper.form.del('{:url(\'delete\')}')"><i
+                                    class="fa-trash"></i></a>
+                        </div>
+                        <div class="image-checkbox">
+                            <input type="checkbox" class="cbr" name="ids" value="{$item.id}" title="选择"/>
+                        </div>
+                    </div>
+                </div>
+                {/volist}
+            </div>
+        </div>
+    </div>
+</section>
+{/block}
+{block name="script"}
+<div class="modal-group">
+    <div class="modal fade" id="update-modal" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{:url('update')}" class="form" method="post" onsubmit="helper.form.submit();">
+                    <div class="modal-gallery-image">
+                        <figure class="img-uploader-wrapper" style="width: 100%;">
+                            <img src="" alt="" width="120" class="img-responsive"
+                                 onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQYV2NgAAIAAAUAAarVyFEAAAAASUVORK5CYII='">
+                            <input type="file" id="modal-form-url" data-name="url" accept="image/*"
+                                   class="form-control img-file-input uploader-file" data-title="图片"
+                                   onchange="helper.imageInputChange()">
+                            <input type="hidden" name="url" value="">
+                        </figure>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-title">
+                                        标题
+                                    </label>
+                                    <input type="text" name="title" id="modal-form-title" class="form-control"
+                                           required="required" placeholder="标题">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-class_name">
+                                        分类名称
+                                    </label>
+                                    <input type="text" name="class_name" id="modal-form-class_name" class="form-control"
+                                           required="required" placeholder="分类名称">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer modal-gallery-top-controls" style="z-index: 1">
+                        <button type="button" class="btn btn-xs btn-white" data-dismiss="modal">关闭</button>
+                        <button class="btn btn-xs btn-secondary">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{load href="http://gosspublic.alicdn.com/aliyun-oss-sdk-4.4.4.min.js"}
+{load href="__STATIC__/Common/js/OSSHelper.js"}
+<script>
+    /**
+     * 全选
+     */
+    $("#select-all").on('change', function (ev) {
+        var is_checked = $(this).is(':checked');
+        $(".album-image input[type='checkbox']").prop('checked', is_checked).trigger('change');
+    });
+
+    function batchDelete() {
+        var ids = [];
+        var $checkbox = $(".album-images").find("input:checked[name=ids]").each(function () {
+            ids.push(this.value);
+        });
+        if (!ids.length) return helper.msg.info("至少选择1张图片");
+        if (!confirm("确定要删除选择的" + ids.length + "张图片吗？")) return;
+        ids = ids.join(",");
+        helper.post("{:url('delete')}", {ids: ids}, function (data) {
+            helper.msg.success(data.msg);
+            helper.remove($checkbox.closest(".item"));
+        });
+    }
+</script>
+{/block}

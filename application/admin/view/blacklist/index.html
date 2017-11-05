@@ -1,0 +1,222 @@
+{extend name="layout"/}
+{block name="body"}
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="btn-group btn-group-md">
+            <button class="btn btn-primary" onclick="helper.form.modify()">
+                + 新增
+            </button>
+        </div>
+        <table class="table table-hover middle-align text-center">
+            <thead>
+            <tr>
+                <th>id</th>
+                <th>学号</th>
+                <th>班级</th>
+                <th>姓名</th>
+                <th>创建时间</th>
+                <th>修改时间</th>
+                <th>操作IP</th>
+                <th>启用</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="_list" id="item"}
+            <tr class="item" data-id="{$item.id}">
+                <td>
+                    <p class="form-control-static" data-name="id">
+                        {$item.id}
+                    </p>
+                    <input type="hidden" name="id" value="{$item.id}" form="form-{$item.id}">
+                </td>
+                <td>
+                    <input type="hidden" name="stu_no" form="form-{$item.id}" class="form-control"
+                           required="required" value="{$item.stu_no}" placeholder="学号">
+                </td>
+                <td>
+                    <input type="text" name="class" form="form-{$item.id}" class="form-control"
+                           required="required" value="{$item.class}" placeholder="班级">
+                </td>
+                <td>
+                    <input type="text" name="name" form="form-{$item.id}" class="form-control"
+                           required="required" value="{$item.name}" placeholder="姓名">
+                </td>
+                <td>
+                    <input type="text" name="create_time" form="form-{$item.id}" class="form-control"
+                           required="required" value="{$item.create_time}" placeholder="创建时间">
+                </td>
+                <td>
+                    <input type="text" name="update_time" form="form-{$item.id}" class="form-control"
+                           required="required" value="{$item.update_time}" placeholder="修改时间">
+                </td>
+                <td>
+                    <p class="form-control-static" data-name="ip">
+                        {$item.ip}
+                    </p>
+                    <input type="hidden" name="ip" value="{$item.ip}" form="form-{$item.id}">
+                </td>
+                <td>
+                    <label>
+                        valid {if condition="$item.valid"}
+                        <input type="checkbox" class="iswitch iswitch-info" value="1" form="form-{$item.id}"
+                               name="valid" checked="checked">
+                        {else/}
+                        <input type="checkbox" class="iswitch iswitch-info" value="1" form="form-{$item.id}"
+                               name="valid">
+                        {/if}
+                    </label>
+                </td>
+                <td>
+                    <input type="hidden" name="comment" value="{$item.comment}" form="form-{$item.id}">
+                    <input type="hidden" name="uid" value="{$item.uid}" form="form-{$item.id}">
+                    <form action="{:url('update')}" id="form-{$item.id}" onsubmit="helper.form.submit()">
+                        <div class="btn-group">
+                            <button class="btn btn-success">
+                                保存
+                            </button>
+                            <button type="button" class="btn btn-info" onclick="helper.form.modify(this)">
+                                修改
+                            </button>
+                            <button type="button" class="btn btn-danger"
+                                    onclick="helper.form.del('{:url(\'delete\')}')">
+                                删除
+                            </button>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+        <div>{:widget('common/paginator/show', [$_list])}</div>
+    </div>
+</div>
+{/block} {block name="script"}
+<div class="modal-group">
+    <div class="modal fade" id="update-modal" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{:url('update')}" class="form" method="post" onsubmit="helper.form.submit();">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            ×
+                        </button>
+                        <h4 class="modal-title">
+							<span class="action-type">
+								更新
+							</span>
+                            黑名单
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-stu_no">
+                                        学号
+                                    </label>
+                                    <input type="text" name="stu_no" id="modal-form-stu_no" class="form-control"
+                                           required="required" placeholder="学号">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-class">
+                                        班级
+                                    </label>
+                                    <input type="text" name="class" id="modal-form-class" class="form-control"
+                                           required="required" placeholder="班级">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-name">
+                                        姓名
+                                    </label>
+                                    <input type="text" name="name" id="modal-form-name" class="form-control"
+                                           required="required" placeholder="姓名">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-valid">
+                                        启用
+                                        <input type="checkbox" class="iswitch iswitch-info" value="1"
+                                               id="modal-form-valid"
+                                               name="valid">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-comment">
+                                        备注
+                                    </label>
+                                    <textarea name="comment" id="modal-form-comment" class="form-control"
+                                              required="required" placeholder="备注">
+									</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-create_time">
+                                        创建时间
+                                    </label>
+                                    <p class="form-control-static" id="modal-form-create_time" data-name="create_time">
+                                    </p>
+                                    <input type="hidden" name="create_time">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-update_time">
+                                        修改时间
+                                    </label>
+                                    <p class="form-control-static" id="modal-form-update_time" data-name="update_time">
+                                    </p>
+                                    <input type="hidden" name="update_time">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-ip">
+                                        操作IP
+                                    </label>
+                                    <p class="form-control-static" id="modal-form-ip" data-name="ip">
+                                    </p>
+                                    <input type="hidden" name="ip">
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="uid">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">
+                            取消
+                        </button>
+                        <button class="btn btn-success">
+                            保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}

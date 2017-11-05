@@ -1,0 +1,344 @@
+{extend name="layout"/}
+{block name="body"}
+{if condition="$Request.get.error"}
+<div class="alert alert-danger">
+    <h4>{$Request.get.error}</h4>
+    <p class="text-white">{$Request.get.error_description}</p>
+</div>
+{/if}
+<div class="panel panel-default">
+    <div class="panel-heading text-center">
+        <h2>应用信息</h2>
+    </div>
+    <div class="panel-body">
+        <form action="#" id="app-selector-form" class="form form-horizontal">
+            <div class="form-group">
+                <div class="col-lg-6">
+                    <label for="app-client" class="col-sm-4 col-lg-3 control-label">请选择应用</label>
+                    <div class="col-sm-8 col-lg-9">
+                        <select name="client" id="app-client" class="form-control" onchange="changeClient(this)">
+                            {volist name="_list" id="item"}
+                            <option value="{$item.client_id}">{$item.client_id}</option>
+                            {/volist}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <label for="app-scope" class="col-sm-4 col-lg-3 control-label">scope权限范围</label>
+                    <div class="col-sm-8 col-lg-9">
+                        <input name="scope" id="app-scope" class="form-control" value="basic" form="token-form"
+                               required="required">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-6">
+                    <label for="app-client_id" class="col-sm-4 col-lg-3 control-label">APP ID</label>
+                    <div class="col-sm-8 col-lg-9">
+                        <input type="text" id="app-client_id" class="form-control" readonly="readonly"
+                               name="client_id" value="{$_list.0.client_id}" form="token-form" required="required">
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <label for="app-client_secret" class="col-sm-4 col-lg-3 control-label">APP SECRET</label>
+                    <div class="col-sm-8 col-lg-9">
+                        <input type="text" id="app-client_secret" class="form-control" readonly="readonly"
+                               name="client_secret" value="{$_list.0.client_secret}" form="token-form"
+                               required="required">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-6">
+                    <label for="app-authorize_url" class="col-sm-4 col-lg-3 control-label">Authorize URL</label>
+                    <div class="col-sm-8 col-lg-9">
+                        <input type="text" class="form-control" name="authorize_url" id="app-authorize_url"
+                               value="{:url('oauth/server/authorize','',true,true)}" required="required">
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <label for="app-token_url" class="col-sm-4 col-lg-3 control-label">Token URL</label>
+                    <div class="col-sm-8 col-lg-9">
+                        <input type="text" class="form-control" name="token_url" id="app-token_url"
+                               value="{:url('oauth/server/token','',true,true)}" required="required">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading text-center">
+        <h2>请求配置</h2>
+    </div>
+    <div class="panel-body">
+        <form action="{:url('oauth/server/authorize')}" id="request-form" class="form form-horizontal" method="get">
+            <div class="form-group">
+                <div class="col-lg-6">
+                    <label for="request-authorize_url" class="col-sm-4 col-lg-3 control-label">Authorize请求地址</label>
+                    <div class="col-sm-8 col-lg-9">
+                        <input type="text" class="form-control" name="authorize_url" id="request-authorize_url"
+                               value="{:url('oauth/server/authorize','',true,true)}" required="required">
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <label for="request-access_type" class="col-sm-4 col-lg-3 control-label">access_type</label>
+                    <div class="col-sm-8 col-lg-9">
+                        <input type="text" class="form-control" name="access_type" id="request-access_type"
+                               required="required" value="offline">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-6">
+                    <label for="request-scope" class="col-sm-4 col-lg-3 control-label">scope</label>
+                    <div class="col-sm-8 col-lg-9">
+                        <input type="text" class="form-control" name="scope" id="request-scope" value="basic"
+                               required="required">
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <label for="request-redirect_uri" class="col-sm-4 col-lg-3 control-label">redirect_uri</label>
+                    <div class="col-sm-8 col-lg-9">
+                        <input type="text" class="form-control" name="redirect_uri" id="request-redirect_uri"
+                               required="required" value="{:url('','',true,true)}">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-6">
+                    <label for="request-response_type" class="col-sm-4 col-lg-3 control-label">response_type</label>
+                    <div class="col-sm-8 col-lg-9">
+                        <input type="text" class="form-control" name="response_type" id="request-response_type"
+                               required="required" value="code">
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <label for="request-client_id" class="col-sm-4 col-lg-3 control-label">client_id</label>
+                    <div class="col-sm-8 col-lg-9">
+                        <input type="text" class="form-control" name="client_id" id="request-client_id"
+                               required="required">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-12 text-center">
+                    <button class="btn btn-primary">发送授权请求</button>
+                    <a href="" id="google-authorize-btn" class="btn btn-info"
+                       data-href="https://developers.google.com/oauthplayground/#step1&scopes=basic&url=https%3A%2F%2F&content_type=application%2Fjson&http_method=GET&useDefaultOauthCred=unchecked&oauthEndpointSelect=Custom&oauthAuthEndpointValue={:urlencode(url('oauth/server/authorize','','',true))}&oauthTokenEndpointValue={token}&oauthClientId={app_id}&oauthClientSecret={app_secret}&includeCredentials=checked&accessTokenType=bearer&autoRefreshToken=unchecked&accessType=offline&prompt=consent&response_type=code">
+                        前往Google OAuth Playground授权</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading text-center">
+        <h2>令牌维护</h2>
+    </div>
+    <div class="panel-body">
+        {empty name="$Request.get.code"}
+        <div class="alert alert-black">
+            <h4>请先发送授权请求，获取Authorization Code</h4>
+        </div>
+        {else/}
+        <div class="alert alert-info" id="token-alert">
+            <h4>Authorization Code 为 <span>{$Request.get.code}</span></h4>
+            <p class="text-white">请在30秒内交换Access Token令牌</p>
+        </div>
+        {/empty}
+        <form action="{:url('oauth/server/token')}" id="token-form" class="form form-horizontal" method="post">
+            <div class="form-group">
+                <div class="col-lg-6">
+                    <label for="token-code" class="col-sm-4 col-lg-3 control-label">Authorization Code</label>
+                    <div class="col-sm-8 col-lg-9">
+                        <input type="text" class="form-control" name="code" id="token-code" required="required"
+                               value="{$Request.get.code}" placeholder="先发送授权请求">
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <label for="token-grant_type" class="col-sm-4 col-lg-3 control-label">Grant Type</label>
+                    <div class="col-sm-8 col-lg-9">
+                        <input type="text" class="form-control" name="grant_type" id="token-grant_type"
+                               required="required" value="authorization_code">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-6">
+                    <label for="token-redirect_uri" class="col-sm-4 col-lg-3 control-label">Redirect URI</label>
+                    <div class="col-sm-8 col-lg-9">
+                        <input type="text" class="form-control" name="redirect_uri" id="token-redirect_uri"
+                               required="required" value="{:url('','',true,true)}">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-12 text-center">
+                    <button class="btn btn-primary">交换Access Token</button>
+                    <a href="" id="google-token-btn" class="btn btn-info"
+                       data-href="https://developers.google.com/oauthplayground/#step1&scopes=basic&url=https%3A%2F%2F&content_type=application%2Fjson&http_method=GET&useDefaultOauthCred=unchecked&oauthEndpointSelect=Custom&oauthAuthEndpointValue={authorize}&oauthTokenEndpointValue={token}&oauthClientId={app_id}&oauthClientSecret={app_secret}&includeCredentials=checked&accessTokenType=bearer&autoRefreshToken=unchecked&accessType=offline&prompt=consent&response_type=code">
+                        前往Google OAuth Playground交换</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading text-center">
+        <h2>资源访问</h2>
+    </div>
+    <div class="panel-body">
+        <form action="{:url('resource')}" class="form form-horizontal" method="post" id="resource-form">
+            <div class="form-group">
+                <div class="col-lg-6">
+                    <label for="resource-access-token" class="col-sm-4 col-lg-3 control-label">Access token</label>
+                    <div class="col-sm-8 col-lg-9">
+                        <input type="text" class="form-control" name="access_token" id="resource-access-token">
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <label for="resource-refresh-token" class="col-sm-4 col-lg-3 control-label">Refresh token</label>
+                    <div class="col-sm-8 col-lg-9">
+                        <input type="text" class="form-control" name="refresh_token" id="resource-refresh-token"
+                               form="token-form">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-12 text-center">
+                    <button class="btn btn-primary" type="button" onclick="OAuth.refresh()" form="token-form"
+                            name="grant_type" value="refresh_token">刷新令牌
+                    </button>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-6">
+                    <label for="resource-url" class="col-sm-4 col-lg-3 control-label">资源URL</label>
+                    <div class="col-sm-8 col-lg-9">
+                        <input type="text" class="form-control" name="url" id="resource-url"
+                               value="{:url('oauth/user/info','','',true)}" required="required">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-12 text-center">
+                    <button class="btn btn-primary" type="button" onclick="OAuth.refresh()" form="token-form"
+                            name="grant_type" value="refresh_token">发送请求
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script>
+    var OAuth = (function ($) {
+        var expireTimer = null;
+        var expiration = 0;
+
+        function expiresTimer(duration) {
+            expiration = duration;
+            expireTimer && clearTimeout(expireTimer);
+            expireTimer = setTimeout(function () {
+                var $alert = $("#token-alert");
+                var $alert_p = $alert.find("p");
+                var $alert_h4 = $alert.find("h4");
+                expiration--;
+                if (expiration > 0) {
+                    expiresTimer(expiration);
+                    if (expiration < 30) {
+                        $alert_h4.text("令牌即将失效");
+                    }
+                } else {
+                    $alert_h4.text("令牌失效");
+                    $alert_p.html("令牌失效，请刷新令牌");
+                }
+                $("#expires-time").text(expiration);
+            }, 1000);
+        }
+
+        function refresh() {
+            var fd = new FormData(event.target.form);
+            var url = event.target.form.action;
+            fd.append("grant_type", "refresh_token");
+            post(url, fd);
+        }
+
+        function token() {
+            return post();
+        }
+
+        function post(url, data) {
+            var options = {
+                url: url,
+                type: "post",
+                data: data,
+                dataType: "json",
+                success: handleRequest,
+                error: function (XHRRequest, statusText, errorThrown) {
+                    if (XHRRequest.responseJSON)
+                        handleRequest(XHRRequest.responseJSON);
+                    else
+                        helper.msg.error("服务器错误，请稍后再试");
+                }
+            };
+            if (data instanceof FormData) {
+                options.processData = false;
+                options.contentType = false;
+            }
+
+            return $.ajax(options);
+        }
+
+        function handleRequest(data) {
+            if (data.access_token) {
+                //交换成功，得到Access Token
+                helper.form.fill(data, $("#resource-form"), false);
+                $("#token-alert").find("p").html("令牌将在 <span id='expires-time' class='text-danger'>" + data.expires_in + "</span> 秒内过期").end().find("h4").text("交换成功");
+                helper.msg.success("交换成功，令牌将在 " + data.expires_in + " 秒内过期");
+                expiresTimer(data.expires_in);
+            } else {
+                if (data.error_description)
+                    helper.msg.error(data.error_description, data.error);
+                else
+                    helper.msg.error(data.error);
+            }
+        }
+
+        return {
+            refresh: refresh,
+            token: token,
+            post: post
+        };
+    })(jQuery);
+</script>
+<script>
+    var app_secret = JSON.parse('{$_secret|json_encode}');
+    function changeClient(select) {
+        $("#app-client_secret").val(app_secret[select.value]);
+        $("#app-client_id").val(select.value);
+        localStorage.setItem("oauth_app_id", select.value);
+    }
+
+    if (localStorage.getItem("oauth_app_id")) {
+        $("#app-client").val(localStorage.getItem("oauth_app_id"));
+    }
+
+    function generateAuthorizeUrl() {
+        var data = helper.form.formToData($("#app-selector-form"));
+        helper.form.fill(data, $("#request-form"), false);
+    }
+
+    $("#app-selector-form").find("input,select").change(function () {
+        generateAuthorizeUrl();
+    }).change();
+
+    $("#token-form").submit(function (e) {
+        e.preventDefault();
+        var fd = new FormData(e.target);
+        OAuth.post(e.target.action, fd);
+    });
+</script>
+{/block}

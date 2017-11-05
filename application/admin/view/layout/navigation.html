@@ -1,0 +1,39 @@
+{volist name="__navigation_info.tree" id="item"}
+{if condition="$item['id'] == $__navigation_info['current']['id']"}
+<li class="active">
+    {else/}
+    {if condition="$item['id'] == $__navigation_info['current']['pid']"}
+<li class="opened">
+    {else/}
+<li>
+    {/if}
+    {/if}
+    {if condition="key_exists('_child', $item)"}
+    <a href="javascript:void(0)">
+        <i class="{$item.icon_class}"></i>
+        <span class="title">{$item.title}</span>
+    </a>
+    {else/}
+    <a href="{:url($item['url'])}">
+        <i class="{$item.icon_class}"></i>
+        <span class="title">{$item.title}</span>
+    </a>
+    {/if}
+    {if condition="key_exists('_child', $item)"}
+    <ul>
+        {volist name="item._child" id="child_item"}
+        {if condition="$child_item['id'] == $__navigation_info['current']['id']"}
+        <li class="active">
+            {else/}
+        <li>
+            {/if}
+            <a href="{:url($child_item['url'])}">
+                <i class="fa-caret-right"></i>
+                <span class="title">{$child_item.title}</span>
+            </a>
+        </li>
+        {/volist}
+    </ul>
+    {/if}
+</li>
+{/volist}

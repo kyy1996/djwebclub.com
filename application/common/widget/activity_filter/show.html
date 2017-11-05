@@ -1,0 +1,72 @@
+{load href="__STATIC__/daterangepicker/daterangepicker-bs3.css"}
+{load href="__STATIC__/select2/select2.css"}
+{load href="__STATIC__/select2/select2-bootstrap.css"}
+{load href="__STATIC__/moment/moment.min.js"}
+{load href="__STATIC__/daterangepicker/daterangepicker.js"}
+{load href="__STATIC__/select2/select2.min.js"}
+{load href="__STATIC__/select2/select2_locale_zh-CN.js"}
+<form action="" method="get" id="filter-form" enctype="multipart/form-data" class="form-horizontal">
+    <div class="col-md-4">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label for="stu-select" class="control-label col-xs-2">学生</label>
+                <div class="col-xs-10">
+                    <select class="form-control select2" id="stu-select" name="stu_no"
+                            onchange="submitFilter()">
+                        <option value="0">所有学生</option>
+                        {volist name="_student_list" id="student"}
+                        {if condition="input('stu_no') == $student.stu_no"}
+                        <option value="{$student.stu_no}" selected="selected">{$student.class} -
+                            {$student.name}
+                        </option>
+                        {else/}
+                        <option value="{$student.stu_no}">{$student.class} - {$student.name}</option>
+                        {/if}
+                        {/volist}
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="time-range-input" class="control-label col-xs-2">时间</label>
+            <div class="col-xs-10">
+                <input id="time-range-input" class="form-control daterange" type="text" name="time"
+                       readonly="readonly" data-callback="filterByTime" data-time-picker="true"
+                       data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm"
+                       value="{:input('time')}">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="activity-select" class="control-label col-xs-2">活动</label>
+            <div class="col-xs-10">
+                <select class="form-control select2" id="activity-select" onchange="submitFilter()"
+                        name="activity_id">
+                    <option value="0">所有活动</option>
+                    {volist name="_activity_list" id="activity"}
+                    {if condition="input('activity_id') == $activity.id"}
+                    <option selected="selected" value="{$activity.id}">{$activity.name} @ {$activity.time}
+                        {$activity.location}
+                    </option>
+                    {else/}
+                    <option value="{$activity.id}">{$activity.name} @ {$activity.time} {$activity.location}
+                    </option>
+                    {/if}
+                    {/volist}
+                </select>
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    function submitFilter() {
+        $("#filter-form").submit();
+    }
+
+    function filterByTime(start, end) {
+        submitFilter();
+    }
+</script>

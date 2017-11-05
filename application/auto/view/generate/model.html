@@ -1,0 +1,271 @@
+{extend name="layout"/}
+{block name="style"}
+<style>
+    .column-list {
+        margin-bottom: 0;
+    }
+
+    .column-list li {
+        float: left;
+        margin-right: 10px;
+    }
+
+    .editor-textarea {
+        display: none;
+    }
+
+    .ace_editor {
+        height: 800px;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="panel">
+    <div class="panel-body">
+        <form action="{:url('generate/generate')}" class="form-horizontal" onsubmit="submitGenerate()">
+            <div class="form-group">
+                <div class="col-sm-3">
+                    <label for="database-select" class="control-label">
+                        选择数据库
+                    </label>
+                    <select name="database" id="database-select" class="form-control">
+                        {volist name="_databases" id="item"}
+                        <option value="{$item.database}">{$item.database}</option>
+                        {/volist}
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <label for="table-select" class="control-label">数据表</label>
+                    <select id="table-select" class="form-control" name="table"></select>
+                </div>
+                <div class="col-sm-3">
+                    <label class="control-label" for="relation-type-select">关联类型</label>
+                    <select name="relation[type]" id="relation-type-select" class="form-control">
+                        <option value="0">无关联</option>
+                        <option value="hasone" data-options="foreign_key,local_key">一对一</option>
+                        <option value="hasmany" data-options="foreign_key,local_key">一对多</option>
+                        <option value="belongstomany" data-options="table,foreign_key,local_key">多对多</option>
+                        <option value="hasmanythrough" data-options="through,foreign_key,through_key,local_key">远程一对多
+                        </option>
+                        <option value="morphmany" data-options="morph,morph_type">多态一对多</option>
+                        <option value="belongsto" data-options="foreign_key,other_key">被关联</option>
+                        <option value="morphto" data-options="">多态被关联</option>
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <label for="relation-table-select">关联表的模型名称</label>
+                    <select type="text" class="form-control" name="relation[model]" id="relation-table-select"></select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-12">
+                    <label class="control-label" for="readonly-column-list">只读字段（只可被写入一次）</label>
+                    <div>
+                        <ul id="readonly-column-list" class="column-list list-unstyled clearfix"></ul>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group relation-options">
+                <div class="col-sm-6 col-md-3" id="relation[table]-wrapper">
+                    <label for="relation[table]" class="control-label">中间表</label>
+                    <input type="text" name="relation[table]" id="relation[table]" class="form-control"
+                           list="column-list" placeholder="多对多关联的中间表名称，包括前缀">
+                </div>
+                <div class="col-sm-6 col-md-3" id="relation[foreign_key]-wrapper">
+                    <label for="relation[foreign_key]" class="control-label">外键</label>
+                    <input type="text" name="relation[foreign_key]" id="relation[foreign_key]" class="form-control"
+                           list="column-list" placeholder="当前表的外键名称，或关联表在中间表中的键名">
+                </div>
+                <div class="col-sm-6 col-md-3" id="relation[other_key]-wrapper">
+                    <label for="relation[other_key]" class="control-label">关联表主键</label>
+                    <input type="text" name="relation[other_key]" id="relation[other_key]" class="form-control"
+                           list="relation-column-list" placeholder="关联表中的主键名称">
+                </div>
+                <div class="col-sm-6 col-md-3" id="relation[local_key]-wrapper">
+                    <label for="relation[local_key]" class="control-label">本地键</label>
+                    <input type="text" name="relation[local_key]" id="relation[local_key]" class="form-control"
+                           list="column-list" placeholder="当前表的主键名称，或当前表在中间表中的键名">
+                </div>
+                <div class="col-sm-6 col-md-3" id="relation[morph]-wrapper">
+                    <label for="relation[morph]" class="control-label">多态关联中间模型</label>
+                    <input type="text" name="relation[morph]" id="relation[morph]" class="form-control"
+                           placeholder="多态关联的中间表模型名称">
+                </div>
+                <datalist id="column-list"></datalist>
+                <datalist id="relation-column-list"></datalist>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="auto-column-list" class="control-label">自动完成</label>
+                    <ul id="auto-column-list" class="column-list list-unstyled clearfix"></ul>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label>启用自动写入时间戳 <input type="checkbox" name="timestamp" class="iswitch iswitch-warning"
+                                            id="timestamp-input"></label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <button class="btn btn-success">生成</button>
+                </div>
+            </div>
+        </form>
+        <form action="{:url('save')}" class="form-horizontal" onsubmit="submitSave()">
+            <div class="form-group">
+                <div class="col-xs-12">
+                    <label for="model-path">文件路径</label>
+                    <input type="text" class="form-control" placeholder="model文件路径" required="required"
+                           name="path" id="model-path" value="">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-12">
+                    <label for="model-content">文件内容</label>
+                    <textarea class="form-control editor-textarea" placeholder="文件内容"
+                              required="required" name="content" rows="50"
+                              id="model-content"></textarea>
+                    <pre class="editor" id="model-content-editor"></pre>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-12">
+                    <button class="btn btn-warning">保存</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<!--{load href="__STATIC__/ace/emmet.js"/}-->
+{load href="__STATIC__/ace/ace.js"/}
+{load href="__STATIC__/ace/ext-emmet.js"/}
+<script>
+    var Generator = (function ($) {
+        var database = "", table = "", columns = [], relation = "";
+
+        var $databaseSelector = $("#database-select"), $tableSelector = $("#table-select"),
+            $relationSelector = $("#relation-type-select");
+        var $columnList = $("#column-list");
+
+        function init() {
+            $databaseSelector.change(function () {
+                database = $(this).val();
+                if (!database) return;
+                var data = {database: database};
+                helper.post("{:url('getTableList')}", data, function (data) {
+                    if (data.data instanceof Object) {
+                        fillTableSelect(data.data);
+                        $tableSelector.change();
+                        fillTableSelect(data.data, $("#relation-table-select"));
+                    }
+                });
+            }).change();
+
+            $("#relation-table-select").change(function () {
+                table = $(this).val();
+                if (!table) return;
+                var data = {table: table};
+                helper.post("{:url('getColumnList')}", data, function (data) {
+                    if (data.data instanceof Object) {
+                        fillColumnList(data.data, $("#relation-column-list"));
+                    }
+                });
+            });
+
+            $tableSelector.change(function () {
+                table = $(this).val();
+                if (!table) return;
+                var data = {table: table};
+                helper.post("{:url('getColumnList')}", data, function (data) {
+                    if (data.data instanceof Object) {
+                        fillColumnList(data.data, $("#readonly-column-list"), "readonly[]", false);
+                        fillColumnList(data.data, $("#auto-column-list"), "auto[]", false);
+                        fillColumnList(data.data);
+                    }
+                });
+            });
+
+            $relationSelector.change(function () {
+                relation = $(this).val();
+                if (relation == 0) {
+                    $(".relation-options").hide();
+                    $("#relation-table-select").prop("disabled", true);
+                } else {
+                    $("#relation-table-select").prop("disabled", false).change();
+                    $(".relation-options").show().children("div").hide();
+                    var options = $(this.selectedOptions[0]).data("options");
+                    if (!options) return;
+                    options.split(",").forEach(function (name) {
+                        $("#relation\\[" + name + "\\]-wrapper").show();
+                    });
+                }
+            }).change();
+        }
+
+        function fillTableSelect(table_list, $target) {
+            $target = $target || $tableSelector;
+            $target.html("");
+
+            table_list.forEach(function (table) {
+                var option = "<option value='" + database + "." + table.name + "'>" + table.name + "</option>";
+                $target.append(option);
+            });
+        }
+
+        function fillColumnList(column_list, $target, name, checked) {
+            columns = [];
+            $target = $target || $columnList;
+            name = name || "readonly[]";
+            if (checked !== false) checked = " checked='checked'";
+            else checked = "";
+            $target.html("");
+            column_list.forEach(function (column) {
+                columns.push(column.Field);
+                if ($target.is("ul"))
+                    var li = "<li><label><input class='iswitch iswitch-info'" + checked + " type='checkbox' name='" + name + "' value='" + column.Field + "'>" + column.Field + "</label></li>";
+                else li = "<option value='" + column.Field + "'>" + column.Field + "</option>";
+                $target.append(li);
+            });
+        }
+
+        $(function () {
+            init();
+        });
+    })(jQuery);
+
+    var aceEditor = [];
+    $(".editor").each(function () {
+        var editor = ace.edit(this);
+        var textarea = this;
+        editor.setFontSize(14);
+        editor.getSession().setMode("ace/mode/php");
+        editor.setTheme("ace/theme/tomorrow");
+        editor.getSession().setUseWrapMode(true);
+        editor.on("change", function () {
+            $(textarea).prev().val(editor.getSession().getValue());
+        });
+        aceEditor.push(editor);
+    });
+
+    function submitGenerate() {
+        event.preventDefault();
+        var fd = new FormData(event.target);
+        helper.post(event.target.getAttribute("action"), fd, function (data) {
+            helper.msg.success(data.msg);
+            aceEditor[0].getSession().setValue(data.data.content);
+            $("#model-path").val(data.data.filename);
+        });
+    }
+
+    function submitSave() {
+        event.preventDefault();
+        var fd = new FormData(event.target);
+        helper.post(event.target.getAttribute("action"), fd, function (data) {
+            helper.msg.success(data.msg);
+        });
+    }
+</script>
+{/block}

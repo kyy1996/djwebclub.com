@@ -1,0 +1,160 @@
+{extend name="layout" /}
+{block name="body"}
+<div class="panel panel-default">
+    <div class="panel-body">
+        {if condition="$_user"}
+        <div>
+            <h4>用户 {$_user.email} 所属的用户组</h4>
+        </div>
+        {else/}
+        <div class="btn-group btn-group-md">
+            <button class="btn btn-primary" onclick="helper.form.modify()">+ 新增</button>
+        </div>
+        {/if}
+        <table class="table table-hover middle-align text-center">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>名称</th>
+                <th class="visible-md visible-lg">所属模块</th>
+                <th class="visible-md visible-lg">状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="_list" id="item"}
+            <tr class="item" data-id="{$item.id}">
+                <td>
+                    {$item.id}
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="title"
+                           value="{$item.title}"
+                           form="user-form-{$item.id}"
+                           placeholder="用户组名称" required="required">
+                </td>
+                <td class="visible-md visible-lg">
+                    <input type="text" class="form-control" value="{$item.module}" form="user-form-{$item.id}"
+                           name="module" placeholder="模块名称">
+                </td>
+                <td class="visible-md visible-lg">
+                    <label class="control-label">
+                        启用
+                        {if condition="$item['status']"}
+                        <input type="checkbox" name="status" class="iswitch iswitch-success" form="user-form-{$item.id}"
+                               value="1" checked="checked">
+                        {else/}
+                        <input type="checkbox" name="status" class="iswitch iswitch-success" form="user-form-{$item.id}"
+                               value="1">
+                        {/if}
+                    </label>
+                </td>
+                <td>
+                    <form action="{:url('update')}" id="user-form-{$item.id}" class="user-form"
+                          onsubmit="helper.form.submit(this)">
+                        <input type="hidden" name="id" value="{$item.id}">
+                        <input type="hidden" name="type" value="{$item.type}">
+                        <input type="hidden" name="description" value="{$item.description}">
+                        <div class="btn-group">
+                            <button class="btn btn-success">保存</button>
+                            <button type="button" class="btn btn-info" onclick="helper.form.modify(this)">修改</button>
+                            <button type="button" class="btn btn-danger"
+                                    onclick="helper.form.del('{:url(\'delete\')}')">删除
+                            </button>
+                            <a class="btn btn-warning" href="{:url('user_group/users?group_id='.$item['id'])}">用户列表</a>
+                            <a class="btn btn-primary"
+                               href="{:url('auth_manager/index?group_id='.$item['id'])}">权限分配</a>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+        {if condition="$_user"}
+        <div class="col-sm-4 col-sm-push-8">
+            <form action="{:url('userUpdate')}" onsubmit="helper.form.submit(this)">
+                <div class="input-group">
+                    <input type="hidden" name="uid" value="{$_user.uid}">
+                    <input type="text" class="form-control" placeholder="添加用户组ID，逗号分隔多个id" name="group_id"
+                           required="required">
+                    <div class="input-group-btn">
+                        <button class="btn btn-success">确定</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        {/if}
+    </div>
+</div>
+{/block}
+{block name="script"}
+<div class="modal-group">
+    <div class="modal fade" id="update-modal" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{:url('update')}" class="user-form" method="post" onsubmit="helper.form.submit(this);">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title"><span class="action-type">更新</span>用户组</h4>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id" value="0">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="field-1" class="control-label">名称</label>
+                                    <input type="text" class="form-control" id="field-1" name="title"
+                                           placeholder="用户组名称" required="required">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="field-2" class="control-label">所属模块</label>
+                                    <input type="text" class="form-control" id="field-2" name="module"
+                                           placeholder="默认为admin模块">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="user-group-description">描述</label>
+                                    <textarea name="description" id="user-group-description" placeholder="用户组描述"
+                                              class="form-control autogrow" rows="10"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group no-margin">
+                                    <label class="control-label" for="status-switch">
+                                        启用:
+                                    </label>
+                                    <div>
+                                        <input id="status-switch" type="checkbox" class="iswitch iswitch-success"
+                                               checked="checked"
+                                               name="status" value="1">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+                        <button class="btn btn-success">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $("td input:checkbox").change(function (e) {
+        var form = e.target.form;
+        if (!(form.id && form.id.value)) return;
+        var fd = new FormData(form);
+        helper.post(form.action, fd);
+    });
+</script>
+{/block}

@@ -1,0 +1,283 @@
+{extend name="layout"/}
+{block name="title"}{$_info.title} - {:get_action_name(request()->controller())}{/block}
+{block name="style"}
+{load href="__STATIC__/highlight/styles/tomorrow.css"}
+{/block}
+{block name="body"}
+<!-- blog -->
+<section class="well-11 bg2 blog">
+    <!-- container -->
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1>{$_info.title}</h1>
+                <nav class="clearfix blog-nav m-b-md m-t-md">
+                    {if condition="$prev = $_info->previousBlog()"}
+                    <a class="btn2 prev-btn" href="{:url('BlogRead',['id'=>$prev->id])}"><span
+                            class="btn2_icon fa fa-angle-double-left"></span>{$prev->title}</a>
+                    {else/}
+                    <!--<a href="javascript:void(0)" class="btn1 btn-1 btn-1b disabled">没有更多文章了</a>-->
+                    {/if}
+                    {if condition="$next = $_info->nextBlog()"}
+                    <a class="btn2 next-btn col-md-pull-0"
+                       href="{:url('BlogRead',['id'=>$next->id])}">{$next->title}<span
+                            class="btn2_icon fa fa-angle-double-right"></span></a>
+                    {else/}
+                    <!--<a href="javascript:void(0)" class="btn1 btn-1 btn-1b disabled">没有更多文章了</a>-->
+                    {/if}
+                </nav>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <p>
+                    由&nbsp;<a href="#">{$_info.user.email}</a>&nbsp;发表于&nbsp; {$_info.create_time}
+                    &nbsp;&nbsp;
+                    分类 <a
+                        href="{:url('index/blog/index',['class'=>$_info['category']['id']])}">{$_info.category.name}</a>
+                    &nbsp;&nbsp;
+                    <a href="#comment">评论({$_info.comment_count})</a>
+                    &nbsp;&nbsp;
+                    <span class="statistic">阅读 {$_info.read_count}</span>
+                </p>
+                {notempty name="_info.cover_img"}<img class="cover-img" src="{$_info.cover_img}" alt=""/>{/notempty}
+                <article>
+                    {$_info.content|html_entity_decode}
+                </article>
+            </div>
+        </div>
+        <nav class="clearfix blog-nav m-t-md m-b-md">
+            {if condition="$prev"}
+            <a class="btn2 prev-btn" href="{:url('BlogRead',['id'=>$prev->id])}"><span
+                    class="btn2_icon fa fa-angle-double-left"></span>{$prev->title}</a>
+            {else/}
+            <!--<a href="javascript:void(0)" class="btn1 btn-1 btn-1b disabled">没有更多文章了</a>-->
+            {/if}
+            {if condition="$next"}
+            <a class="btn2 next-btn" href="{:url('BlogRead',['id'=>$next->id])}">{$next->title}<span
+                    class="btn2_icon fa fa-angle-double-right"></span></a>
+            {else/}
+            <!--<a href="javascript:void(0)" class="btn1 btn-1 btn-1b disabled">没有更多文章了</a>-->
+            {/if}
+        </nav>
+        <p class="bdsharebuttonbox">
+            <a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a>
+            <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+            <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a>
+            <a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a>
+            <a href="#" class="bds_more" data-cmd="more"></a>
+            <a class="bds_count" data-cmd="count"></a>
+        </p>
+        <div class="response" id="comment">
+            <h3>回复</h3>
+            {notempty name="$_info.comments"}
+            <ul class="media-list">
+                {volist
+                name="_info->comments|json_encode|json_decode=###,true|list2tree=###,'id','parent_id'|tree2list"
+                id="vo"}
+                {notempty name="$vo.parent_id"}
+                <li class="media response-info text-muted" data-id="{$vo.id}" style="padding-left: 4em;">
+                    <div class="clearfix">
+                        <div class="col-xs-12">
+                            <div class="media-left text-center">
+                                <img src="__STATIC__/Home/images/user1.jpg">
+                                <div class="media-info text-center" title="{$vo.nickname}">{$vo.nickname}</div>
+                            </div>
+                            <div class="media-body">
+                                <div class="clearfix">
+                                    <p>{$vo.content|nl2br}</p>
+                                    <div class="text-right">
+                                        <div>{$vo.create_time}</div>
+                                        <div><a href="javascript:reply('{$vo.id}')">回复</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                {else/}
+                <li class="media response-info text-muted" data-id="{$vo.id}">
+                    <div class="clearfix">
+                        <div class="col-xs-12">
+                            <div class="media-left text-center">
+                                <img src="__IMG__/user.jpg" width="60">
+                                <div class="media-info text-center" title="{$vo.nickname}">{$vo.nickname}</div>
+                            </div>
+                            <div class="media-body">
+                                <div class="clearfix">
+                                    <p>{$vo.content|nl2br}</p>
+                                    <div class="text-right">
+                                        <div>{$vo.create_time}</div>
+                                        <div><a href="javascript:reply('{$vo.id}')">回复</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                {/notempty}
+                {/volist}
+            </ul>
+            {else/}
+            <div class="media">
+                <div class="media-heading">
+                    <h4>来抢第一个沙发吧！</h4>
+                </div>
+            </div>
+            {/notempty}
+        </div>
+        <div class="opinion m-b-md">
+            <h3>评论</h3>
+            <form action="{:url('blog_comment/save')}" method="post" id="addCommentForm"
+                  onsubmit="Comment.add();return false;">
+                <input type="hidden" name="blog_id" value="{$_info.id}">
+                <div class="row m-b-md">
+                    <div class="col-xs-6">
+                        <input class="form-control" placeholder="昵称" name="nickname" required="required">
+                    </div>
+                    <div class="col-xs-6">
+                        <input class="form-control" type="email" placeholder="Email" name="email" required="required">
+                    </div>
+                </div>
+                <div class="row m-b-md">
+                    <div class="col-xs-12">
+                        <textarea class="form-control" placeholder="内容" name="content" required="required"></textarea>
+                    </div>
+                </div>
+                <button class="btn2"><span class="btn2_icon fa fa-comment-o"></span>评论</button>
+            </form>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <!-- //container -->
+</section>
+<!-- //blog -->
+<div class="modal-group">
+    <div style="display: none;" class="modal fade" id="replyCommentFormModal" tabindex="-1" role="dialog"
+         aria-labelledby="modalConfirmLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h6 class="modal-title" id="modalConfirmLabel"><strong>回复</strong></h6>
+                </div>
+                <div class="modal-body">
+                    <form action="{:url('blog_comment/save')}" method="post" id="replyCommentForm"
+                          onsubmit="Comment.reply();return false;">
+                        <input type="hidden" name="parent_id" id="parent_id" value="">
+                        <input type="hidden" name="blog_id" value="{$_info.id}">
+                        <input type="hidden" name="uid" value="{$_user.uid|intval}">
+
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="nickname" id="nickname" value=""
+                                   required="required" placeholder="昵称">
+                        </div>
+                        <div class="form-group">
+                            <input type="email" class="form-control" name="email" id="email" value="{$_user.email}"
+                                   required="required" placeholder="Email">
+                        </div>
+                        <div class="form-group">
+                                <textarea class="form-control" id="content" name="content" placeholder="内容"
+                                          required="required"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal" aria-hidden="true">关闭
+                    </button>
+                    <button class="btn btn-primary" type="submit" form="replyCommentForm">提交</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+</div>
+{/block}
+{block name="script"}
+{load href="__STATIC__/highlight/highlight.min.js"}
+{load href="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.0/raphael-min.js"}
+{load href="http://flowchart.js.org/flowchart-latest.js"}
+<script>
+    var addCommentUrl   = "{:url('blog_comment/save')}";
+    var replyCommentUrl = "{:url('blog_comment/save')}";
+
+    function reply(id) {
+        $("#replyCommentFormModal").find("#content,#nickname,#email").val("").end().find("#parent_id").val(id).end().modal('show');
+    }
+
+    hljs.initHighlightingOnLoad();
+
+    //流程图
+    $(".html.flow").each(function (i) {
+        var code = $(this).prop('id', 'blog-flow-' + i).text();
+        $(this).text("");
+        var chart = flowchart.parse(code);
+        chart.drawSVG('blog-flow-' + i, {
+            // 'x': 30,
+            // 'y': 50,
+            'line-width': 3,
+            'maxWidth': 3,//ensures the flowcharts fits within a certian width
+            'line-length': 50,
+            'text-margin': 10,
+            'font-size': 14,
+            'font': 'normal',
+            'font-family': 'MILT_RG, "方正兰亭黑"',
+            'font-weight': 'normal',
+            'font-color': 'black',
+            'line-color': 'black',
+            'element-color': 'black',
+            'fill': 'white',
+            'yes-text': '是',
+            'no-text': '否',
+            'arrow-end': 'block',
+            'scale': 1,
+            'symbols': {
+                /*'start': {
+                    'font-color': 'red',
+                    'element-color': 'green',
+                    'fill': 'yellow'
+                },
+                'end': {
+                    'class': 'end-element'
+                }*/
+            }
+            /*'flowstate': {
+                'past': {'fill': '#CCCCCC', 'font-size': 12},
+                'current': {'fill': 'yellow', 'font-color': 'red', 'font-weight': 'bold'},
+                'future': {'fill': '#FFFF99'},
+                'request': {'fill': 'blue'},
+                'invalid': {'fill': '#444444'},
+                'approved': {'fill': '#58C4A3', 'font-size': 12, 'yes-text': 'APPROVED', 'no-text': 'n/a'},
+                'rejected': {'fill': '#C45879', 'font-size': 12, 'yes-text': 'n/a', 'no-text': 'REJECTED'}
+            }*/
+        });
+    });
+
+    /* 百度分享组件 */
+    window._bd_share_config = {
+        "common": {
+            "bdSnsKey": {},
+            "bdMini": "2",
+            "bdMiniList": ["mshare", "qzone", "sqq", "weixin", "tsina", "bdysc", "renren", "tqq", "kaixin001", "tqf",
+                           "tieba", "douban", "bdhome", "huaban", "fx", "youdao", "qingbiji", "mail", "isohu", "ty",
+                           "fbook", "twi", "linkedin", "h163", "evernotecn", "copy", "print"],
+            "bdStyle": "1",
+            "bdSize": "32",
+            "bdText": '网页客研究会 - {$_info.title}',
+            "bdDesc":
+                '{$_info.content|html_entity_decode|strip_tags|htmlentities|get_short_content=###,120|addslashes}',
+            "bdPic": '{$_info.cover_img}',
+            'bdSign': "off"
+        },
+        "share": {}/*,
+             "image": {
+             "viewList": ["qzone", "weixin", "tsina", "tqq", "renren"],
+             "viewText": "分享到：",
+             "viewSize": "32"
+             }*/
+    };
+    with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];
+</script>
+{/block}

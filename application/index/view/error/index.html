@@ -1,0 +1,21 @@
+{extend name="layout"/}
+{block name="title"}文件不存在{/block}
+{block name="body"}
+<!-- error -->
+<div class="well-7 error">
+    <!-- container -->
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 text-center">
+                <article>
+                    <h4 class="title">文件不存在</h4>
+                    <p>很遗憾，您访问的文件在我们的两台服务器上都不存在。请检查访问地址，修正后再来吧。</p>
+                    <p>PS：如果您是点击本站某个链接后看到本页面的话，请点击 <a href="mailto:{$_common.website_email}">此处</a>
+                        发送E-Mail向我们反馈。谢谢！</p>
+                    <p>给您带来的不便表示非常抱歉！</p>
+                </article>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}

@@ -1,0 +1,83 @@
+{extend name="layout"/}
+{block name="body"}
+<section class="well-7 bg2 login">
+    <div class="container">
+        <div class="bg off">
+            <div class="cnt">
+                <h4 class="wow fadeIn" data-wow-delay=".2s"><span>登录</span></h4>
+                <h6 class="wow fadeIn" data-wow-delay=".4s">登录系统，享受社团信息化服务</h6>
+                <p class="wow fadeIn" data-wow-delay=".6s">
+                </p>
+                <form id="login" action="{:url('user/login')}" method="post" class="form form-horizontal"
+                      onsubmit="return submitForm(this);">
+                    <input type="hidden" name="callback" value="{$Request.param.callback}">
+                    {:token()}
+                    <div class="form-group wow fadeInRight" data-wow-delay=".6s">
+                        <label class="control-label" for="username">用户名</label>
+                        <input type="text" class="form-control" name="username" id="username"
+                               placeholder="学号/UID/E-Mail，注册时为E-Mail" required="required" autocomplete="nope"
+                               autofocus="autofocus"/>
+                    </div>
+                    <div class="form-group wow fadeInRight" data-wow-delay=".6s">
+                        <label class="control-label" for="password">密码</label>
+                        <input type="password" class="form-control" name="password" id="password" placeholder="密码"
+                               required="required" autocomplete="off"/>
+                    </div>
+                    <div class="form-group wow fadeInUp" data-wow-delay=".8s">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <button class="btn btn-primary" id="login-btn" data-loading-text="正在登录"
+                                        onclick="return login(this);"><span class="btn-icon"><i
+                                        class="fa fa-user"></i></span>登录
+                                </button>
+                            </div>
+                            <div class="col-xs-6 text-md-right">
+                                <button class="btn btn-primary" formaction="{:url('register')}" formmethod="get"
+                                        onclick="return register(this);" data-loading-text="正在跳转"><span
+                                        class="btn-icon"><i class="fa fa-user-plus"></i></span>注册
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{/block}
+{block name="script"}
+<script>
+    function login(button) {
+        button.form.username.type = "text";
+        button.form.username.setCustomValidity("");
+        if (!button.form.username.validity.valid)
+            $(button).button("loading");
+        return true;
+    }
+
+    function register(button) {
+        button.form.username.setCustomValidity("");
+        button.form.username.type = "email";
+        if (!button.form.username.validity.valid) {
+            button.form.username.setCustomValidity("注册时，请填写您的E-Mail，并检查您输入的E-Mail格式是否正确，是否误输入了空格或多个@");
+        } else {
+            result = helper.ajax("{:url('checkEmail')}", "post", {email: button.form.username.value}, function (data) {
+                //Email可用
+                $(button).button("loading");
+            }, function () {
+                //被占用
+                button.form.username.setCustomValidity("E-Mail已被占用");
+            }, null, {async: false});
+        }
+        return true;
+    }
+
+    function submitForm(form) {
+        return true;
+    }
+
+    $("input").keydown(function (e) {
+        e.target.setCustomValidity("");
+    });
+</script>
+{/block}

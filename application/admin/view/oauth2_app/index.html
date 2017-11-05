@@ -1,0 +1,241 @@
+{extend name="layout"/}
+{block name="style"}
+{load href="__STATIC__/select2/select2.css"}
+{load href="__STATIC__/select2/select2-bootstrap.css"}
+{/block}
+{block name="body"}
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="btn-group btn-group-md">
+            <button class="btn btn-primary" onclick="helper.form.modify()">+ 新增</button>
+        </div>
+        <table class="table table-hover middle-align text-center">
+            <thead>
+            <tr>
+                <th class="hidden-xs">#</th>
+                <th>应用ID</th>
+                <th class="hidden-xs">应用密钥</th>
+                <th class="hidden-xs hidden-sm hidden-md">跳转地址</th>
+                <th class="hidden-xs hidden-sm">授权类型</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="_list" id="item"}
+            <tr class="item" data-id="{$item.id}">
+                <td class="hidden-xs">
+                    {$item.id}
+                    <input type="hidden" name="id" value="{$item.id}" form="form-{$item.id}">
+                </td>
+                <td>
+                    <input type="text" name="client_id" form="form-{$item.id}" class="form-control"
+                           required="required" value="{$item.client_id}" placeholder="应用ID">
+                </td>
+                <td class="hidden-xs">
+                    <input type="text" name="client_secret" form="form-{$item.id}" class="form-control"
+                           value="{$item.client_secret}" placeholder="应用密钥（留空自动生成）">
+                </td>
+                <td class="hidden-xs hidden-sm hidden-md">
+                    <input type="url" name="redirect_uri" form="form-{$item.id}" class="form-control"
+                           value="{$item.redirect_uri}" placeholder="跳转地址">
+                </td>
+                <td class="hidden-xs hidden-sm">
+                    <select name="grant_types[]" class="form-control grant_types-select" form="form-{$item.id}"
+                            required="required" title="授权类型" multiple="multiple">
+                        {if condition="in_array('authorization_code',$item.grant_types)"}
+                        <option value="authorization_code" selected="selected">
+                            authorization_code
+                        </option>
+                        {else/}
+                        <option value="authorization_code">
+                            authorization_code
+                        </option>
+                        {/if}{if condition="in_array('client_credentials',$item.grant_types)"}
+                        <option value="client_credentials" selected="selected">
+                            client_credentials
+                        </option>
+                        {else/}
+                        <option value="client_credentials">
+                            client_credentials
+                        </option>
+                        {/if}{if condition="in_array('refresh_token',$item.grant_types)"}
+                        <option value="refresh_token" selected="selected">
+                            refresh_token
+                        </option>
+                        {else/}
+                        <option value="refresh_token">
+                            refresh_token
+                        </option>
+                        {/if}{if condition="in_array('password',$item.grant_types)"}
+                        <option value="password" selected="selected">
+                            password
+                        </option>
+                        {else/}
+                        <option value="password">
+                            password
+                        </option>
+                        {/if}
+                    </select>
+                </td>
+                <td>
+                    <input type="hidden" name="scope" form="form-{$item.id}" value="{$item.scope}">
+                    <input type="hidden" name="user_id" form="form-{$item.id}" value="{$item.user_id}">
+                    <form action="{:url('update')}" id="form-{$item.id}" onsubmit="helper.form.submit()">
+                        <div class="btn-group">
+                            <button class="btn btn-success">
+                                保存
+                            </button>
+                            <button type="button" class="btn btn-info" onclick="helper.form.modify(this)">
+                                修改
+                            </button>
+                            <button type="button" class="btn btn-danger"
+                                    onclick="helper.form.del('{:url(\'delete\')}')">
+                                删除
+                            </button>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+        <div>{:widget('common/paginator/show', [$_list])}</div>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<div class="modal-group">
+    <div class="modal fade" id="update-modal" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{:url('update')}" class="form" method="post" onsubmit="helper.form.submit();">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            ×
+                        </button>
+                        <h4 class="modal-title">
+							<span class="action-type">
+								更新
+							</span>
+                            OAuth2应用
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-id">
+                                        #
+                                    </label>
+                                    <p class="form-control-static" id="modal-form-id" data-name="id"></p>
+                                    <input type="hidden" name="id">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-client_id">
+                                        应用ID
+                                    </label>
+                                    <input type="text" name="client_id" id="modal-form-client_id" class="form-control"
+                                           required="required" placeholder="应用ID">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-client_secret">
+                                        应用密钥
+                                    </label>
+                                    <input type="text" name="client_secret" id="modal-form-client_secret"
+                                           class="form-control" placeholder="应用密钥（留空自动生成）">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-redirect_uri">
+                                        跳转地址
+                                    </label>
+                                    <input type="url" name="redirect_uri" id="modal-form-redirect_uri"
+                                           class="form-control"
+                                           placeholder="跳转地址">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-grant_types">
+                                        授权类型
+                                    </label>
+                                    <select name="grant_types[]" id="modal-form-grant_types"
+                                            class="form-control grant_types-select" multiple="multiple"
+                                            required="required">
+                                        <option value="authorization_code">
+                                            authorization_code
+                                        </option>
+                                        <option value="client_credentials">
+                                            client_credentials
+                                        </option>
+                                        <option value="refresh_token">
+                                            refresh_token
+                                        </option>
+                                        <option value="password">
+                                            password
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-scope">
+                                        授权范围
+                                    </label>
+                                    <input type="text" name="scope" id="modal-form-scope" class="form-control"
+                                           placeholder="授权范围（默认为 basic）">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-user_id">
+                                        绑定的用户ID
+                                    </label>
+                                    <input type="text" name="user_id" id="modal-form-user_id" class="form-control"
+                                           placeholder="绑定的用户ID">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">
+                            取消
+                        </button>
+                        <button class="btn btn-success">
+                            保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{load href="__STATIC__/select2/select2.min.js"}
+{load href="__STATIC__/select2/select2_locale_zh-CN.js"}
+<script>
+    $(".grant_types-select").select2({
+        placeholder: '请选择允许的授权类型',
+        allowClear: true
+    }).on('select2-open', function () {
+        // Adding Custom Scrollbar
+        $(this).data('select2').results.addClass('overflow-hidden').perfectScrollbar();
+    });
+</script>
+{/block}

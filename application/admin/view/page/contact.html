@@ -1,0 +1,80 @@
+{extend name="layout"/}
+{block name="body"}
+<div class="panel panel-default">
+    <div class="panel-body">
+        <form action="{:url('updateContact')}" method="post" onsubmit="helper.form.submit()" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-lg-2 col-md-2 control-label" for="map_address">地图地址</label>
+                <div class="col-lg-10 col-md-10">
+                    <textarea class="form-control" name="map_address" rows="3"
+                              id="map_address">{$_config.map_address}</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 col-md-2 control-label" for="left_title">左栏标题</label>
+                <div class="col-lg-10 col-md-10">
+                    <input class="form-control" name="left_title" type="text" id="left_title"
+                           value="{$_config.left_title}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 col-md-2 control-label" for="left_text">左栏内容</label>
+                <div class="col-lg-10 col-md-10">
+                    <textarea class="form-control" name="left_text" rows="3"
+                              id="left_text">{$_config.left_text}</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 col-md-2 control-label" for="mid_title">中栏标题</label>
+
+                <div class="col-lg-10 col-md-10">
+                    <input class="form-control" name="mid_title" type="text" id="mid_title"
+                           value="{$_config.mid_title}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 col-md-2 control-label" for="mid_text">中栏内容</label>
+                <div class="col-lg-10 col-md-10">
+                    <textarea class="form-control" name="mid_text" rows="3" id="mid_text">{$_config.mid_text}</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 col-md-2 control-label" for="right_title">右栏标题</label>
+                <div class="col-lg-10 col-md-10">
+                    <input class="form-control" name="right_title" type="text" id="right_title"
+                           value="{$_config.right_title}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 col-md-2 control-label" for="right_text">右栏内容</label>
+                <div class="col-lg-10 col-md-10">
+                    <textarea class="form-control" name="right_text" rows="3"
+                              id="right_text">{$_config.right_text}</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 col-md-2 control-label" for="other_title">其他标题</label>
+                <div class="col-lg-10 col-md-10">
+                    <input class="form-control" name="other_title" type="text" id="other_title"
+                           value="{$_config.other_title}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 col-md-2 control-label" for="other_text">其他内容</label>
+                <div class="col-lg-10 col-md-10">
+                    <textarea class="form-control" name="other_text" rows="3"
+                              id="other_text">{$_config.other_text}</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-success btn-single">保存</button>
+            </div>
+        </form>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script>
+    helper.setPk("name");
+</script>
+{/block}

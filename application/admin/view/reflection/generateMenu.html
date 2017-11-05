@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>反射器</title>
+    {load href="__STATIC__/bootstrap/css/bootstrap.min.css"}
+    <style>
+        body {
+            font-family: "Microsoft JhengHei Light", sans-serif;
+        }
+    </style>
+</head>
+<body>
+<div class="jumbotron text-center">
+    <h1>{$_module}模块</h1>
+    <h2>权限节点列表</h2>
+    <button class="btn btn-primary btn-lg" form="generate-form">写入数据库</button>
+    <a href="{:url('generateDatabase')}?module={$_module}" class="btn btn-warning btn-lg">检查数据库</a>
+</div>
+<div class="container">
+    <div class="toolbar">
+        <div class="btn-group" data-toggle="buttons">
+            <label class="btn btn-default" id="hideExistBtn">
+                <input type="checkbox"><i class="glyphicon glyphicon-eye-close"></i>隐藏已存在的节点
+            </label>
+        </div>
+        <button class="btn btn-default" id="selectAllBtn"><i class="glyphicon glyphicon-checkbox"></i>选中全部</button>
+        <button class="btn btn-default" id="selectNewBtn"><i class="glyphicon glyphicon-checkbox"></i>选中新节点</button>
+        <button class="btn btn-default" id="revertSelectBtn"><i class="glyphicon glyphicon-checkbox"></i>反选</button>
+    </div>
+    <form action="{:url('generateMenu')}" class="form form-horizontal" method="post" id="generate-form"
+          onsubmit="return generateMenu()">
+        {volist name='_node' id='item' key='i'}
+        <div class="row">
+            <div class="col-xs-12">
+                <h2>{$item.title}</h2>
+                <h3>{$item.name}控制器</h3>
+            </div>
+        </div>
+        <hr>
+        <div class="form-group row text-center">
+            <div class="col-md-3">标题</div>
+            <div class="col-md-4">节点路径</div>
+            <div class="col-md-4">上级菜单</div>
+            <div class="col-md-1">隐藏</div>
+        </div>
+        {volist name='item.methods' id='method' key='j'}
+        {assign name='method_id' value=':intval(sprintf("%d%02d",$i,$j))'/}
+        {if condition='$method["status"]'}
+        <div class="form-group row has-warning exist-item text-center">
+            <div class="col-md-3">
+                <div class="input-group">
+                    <div class="input-group-addon">
+                        <input type="checkbox" name="node[{$method_id}][enable]" value="1" title="写入数据库">
+                    </div>
+                    <input class="form-control" value="{$method.title}" name="node[{$method_id}][title]"
+                           placeholder="标题">
+                    <div class="input-group-addon">已存在</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <input class="form-control" value="{$method.uri}" name="node[{$method_id}][uri]"
+                       placeholder="节点路径">
+            </div>
+            <div class="col-md-4">
+                <select name="node[{$method_id}][pid]" title="父级菜单项" class="form-control">
+                    <option value="0">无</option>
+                    {volist name='_menu' id='menu' key='k'}
+                    <option value="{$menu.id}">
+                        {for start='0' end='$menu["_level"]' name='l'}└─{/for} {$menu.title}
+                    </option>
+                    {/volist}
+                </select>
+            </div>
+            <div class="col-md-1">
+                <input type="checkbox" name="node[{$method_id}][hide]" value="1" title="隐藏">
+            </div>
+            <input type="hidden" value="{$_module}" name="node[{$method_id}][module]">
+            <input type="hidden" value="1" name="node[{$method_id}][status]">
+        </div>
+        {else/}
+        <div class="form-group row text-center">
+            <div class="col-md-3">
+                <div class="input-group">
+                    <div class="input-group-addon">
+                        <input type="checkbox" name="node[{$method_id}][enable]" value="1" title="写入数据库"
+                               checked="checked">
+                    </div>
+                    <input class="form-control" value="{$method.title}" name="node[{$method_id}][title]"
+                           placeholder="标题">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <input class="form-control" value="{$method.uri}" name="node[{$method_id}][uri]"
+                       placeholder="节点路径">
+            </div>
+            <div class="col-md-4">
+                <select name="node[{$method_id}][pid]" title="父级菜单项" class="form-control">
+                    <option value="0">无</option>
+                    {volist name='_menu' id='menu' key='k'}
+                    <option value="{$menu.id}">
+                        {for start='0' end='$menu["_level"]' name='l'}└─{/for} {$menu.title}
+                    </option>
+                    {/volist}
+                </select>
+            </div>
+            <div class="col-md-1">
+                <input type="checkbox" name="node[{$method_id}][hide]" value="1" title="隐藏">
+            </div>
+            <input type="hidden" value="{$_module}" name="node[{$method_id}][module]">
+            <input type="hidden" value="1" name="node[{$method_id}][status]">
+        </div>
+        {/if}
+        {/volist}
+        {/volist}
+    </form>
+</div>
+{load href="__STATIC__/jquery/jquery-3.2.1.js"/}
+{load href="__STATIC__/bootstrap/js/bootstrap.min.js"/}
+{load href='__STATIC__/layer/layer.js'/}
+<script>
+    $("#hideExistBtn").click(function (e) {
+        if (!$("input", this).is(":checked")) $(".exist-item").hide();
+        else $(".exist-item").show();
+    });
+    $("#selectAllBtn").click(function () {
+        $("input:checkbox", ".form-group").prop('checked', true);
+    });
+    $("#revertSelectBtn").click(function () {
+        $("input:checkbox", ".form-group").each(function () {
+            $(this).prop('checked', !$(this).prop('checked'));
+        });
+    });
+    $('#selectNewBtn').click(function () {
+        var $checkbox = $('input:checkbox', '.form-group:not(.exist-item)');
+        $checkbox.prop('checked', true);
+    });
+
+    function generateMenu() {
+        event.preventDefault();
+        var form = event.target;
+        var fd = new FormData(form);
+        $.ajax({
+            url: form.action,
+            data: fd,
+            processData: false,
+            contentType: false,
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if (data.code) layer.msg(data.msg, {shift: 6});
+                layer.msg(data.msg);
+                location.reload();
+            }
+        });
+        return false;
+    }
+</script>
+</body>
+</html>

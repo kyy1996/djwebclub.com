@@ -1,0 +1,29 @@
+<!--========================================================
+                          FOOTER
+=========================================================-->
+<footer class="well-6 bg5">
+    <div class="container">
+        <div class="footer-brand">
+            <h1 class="footer-brand_name">
+                <a href="{:url('index/index')}"><img width="250" src="__IMG__/logo.png" alt="Logo"></a>
+            </h1>
+            <p class="footer-brand_slogan">{$_common.website_address}</p>
+            <p class="number">{$_common.website_mobile}</p>
+        </div>
+        <ul class="soc-list">
+            <li>
+                <a target="_blank" class="fa fa-qq" title="网页客研究会 2015"
+                   href="http://shang.qq.com/wpa/qunwpa?idkey=bf6e0debf5a1e06ef856b2cd717d8658477d2fb63fab7dd5dff98fc4d7a5787b"></a>
+            </li>
+            <li>
+                <a href="mailto:{$_common.website_email}" class="fa fa-envelope"></a>
+            </li>
+        </ul>
+        <div class="copyright">
+            <p>您是第&nbsp;<span id="statistic-pv">{$_visit_count.nb_visits}</span>&nbsp;位访客</p>
+            <p><span>网页客研究会</span> © <span id="copyright-year">{:date('Y')}</span><!-- |
+                <a href="index-5.html">隐私策略</a>--></p>
+            <!-- {%FOOTER_LINK} -->
+        </div>
+    </div>
+</footer>

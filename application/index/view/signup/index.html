@@ -1,0 +1,64 @@
+<form action="{:url('signup')}" id="signup-form" onsubmit="return false">
+    <fieldset>
+        <legend>活动报名</legend>
+        <div class="form-group">
+            <p class="text-left">
+                您报名的活动为:<br>
+                {$_info.time} 在 {$_info.location} 由 {$_info.host} 主持的 {$_info.name} 活动。<br>
+                当前余量为：{:$_info['available'] - $_info['signup_amount']}<br>
+                输入您的个人信息以确认报名
+            </p>
+        </div>
+        <input type="hidden" name="id" value="{$_info.id}">
+        <div class="form-group">
+            <input type="text" class="form-control" name="stu_no" id="stu_no" title="学号" placeholder="学号"
+                   required="required" pattern="\d+" minlength="4" value="{$_user.stu_no}">
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" name="class" id="class" title="班级" placeholder="班级"
+                   required="required" value="{$_user.class}">
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" name="name" id="name" title="姓名" placeholder="姓名"
+                   required="required" value="{$_user.name}">
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" name="contact" id="contact" title="联系方式" placeholder="QQ"
+                   required="required">
+        </div>
+        <div>
+            <button class="btn btn-success-outline" type="submit">确定报名</button>
+            <button class="btn btn-secondary-outline" type="button" onclick="layer.closeAll();">取消</button>
+        </div>
+    </fieldset>
+</form>
+<script>
+    if (localStorage && localStorage.webmaster_stu_no) {
+        $("#name").val(localStorage.webmaster_name);
+        $("#stu_no").val(localStorage.webmaster_stu_no);
+        $("#class").val(localStorage.webmaster_class);
+        $("#contact").val(localStorage.webmaster_contact);
+    }
+    $("#signup-form").submit(function (e) {
+        localStorage.webmaster_name    = $("#name").val();
+        localStorage.webmaster_stu_no  = $("#stu_no").val();
+        localStorage.webmaster_class   = $("#class").val();
+        localStorage.webmaster_contact = $("#contact").val();
+        $.ajax({
+            url: e.target.action,
+            data: $(this).serialize(),
+            dataType: "json",
+            type: "post",
+            success: function (data) {
+                if (data.code) {
+                    layer.msg(data.msg);
+                } else {
+                    layer.msg(data.msg, {shift: 6});
+                    setTimeout(function () {
+                        layer.closeAll();
+                    }, 3000);
+                }
+            }
+        });
+    });
+</script>

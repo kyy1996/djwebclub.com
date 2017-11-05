@@ -1,0 +1,139 @@
+{extend name="layout"/} {block name="body"}
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="btn-group btn-group-md">
+            <button class="btn btn-primary" onclick="helper.form.modify()">
+                + 新增
+            </button>
+        </div>
+        <table class="table table-hover middle-align text-center">
+            <thead>
+            <tr>
+                <th>id</th>
+                <th>类型</th>
+                <th>分类名称</th>
+                <th>项目数量</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="_list" id="item"}
+            <tr class="item" data-id="{$item.id}">
+                <td>
+                    <p class="form-control-static">{$item.id}</p>
+                    <input type="hidden" name="id" value="{$item.id}" form="form-{$item.id}">
+                </td>
+                <td>
+                    <select name="type" class="form-control" form="form-{$item.id}" title="类型" required="required">
+                        {if condition="$item.type == 'Blog'"}
+                        <option value="Blog" selected="selected">博文</option>
+                        {else/}
+                        <option value="Blog">博文</option>
+                        {/if} {if condition="$item.type == 'Gallery'"}
+                        <option value="Gallery" selected="selected">图片</option>
+                        {else/}
+                        <option value="Gallery">图片</option>
+                        {/if} {if condition="$item.type == 'Video'"}
+                        <option value="Video" selected="selected">视频</option>
+                        {else/}
+                        <option value="Video">视频</option>
+                        {/if} {if condition="$item.type == 'Audio'"}
+                        <option value="Audio" selected="selected">音频</option>
+                        {else/}
+                        <option value="Audio">音频</option>
+                        {/if}
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="name" form="form-{$item.id}" class="form-control"
+                           required="required" value="{$item.name}" placeholder="分类名称">
+                </td>
+                <td>
+                    {:count($item->items)}
+                </td>
+                <td>
+                    <form action="{:url('update')}" id="form-{$item.id}" onsubmit="helper.form.submit()">
+                        <div class="btn-group">
+                            <button class="btn btn-success">
+                                保存
+                            </button>
+                            <button type="button" class="btn btn-info" onclick="helper.form.modify(this)">
+                                修改
+                            </button>
+                            <button type="button" class="btn btn-danger"
+                                    onclick="helper.form.del('{:url(\'delete\')}')">
+                                删除
+                            </button>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+        <div>{:widget('common/paginator/show', [$_list])}</div>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<div class="modal-group">
+    <div class="modal fade" id="update-modal" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{:url('update')}" class="form" method="post" onsubmit="helper.form.submit();">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            ×
+                        </button>
+                        <h4 class="modal-title">
+							<span class="action-type">
+								更新
+							</span>
+                            分类
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-type">
+                                        类型
+                                    </label>
+                                    <select name="type" id="modal-form-type" class="form-control" required="required">
+                                        <option value="Blog">博文</option>
+                                        <option value="Gallery">图片</option>
+                                        <option value="Video">视频</option>
+                                        <option value="Audio">音频</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="modal-form-name">
+                                        分类名称
+                                    </label>
+                                    <input type="text" name="name" id="modal-form-name" class="form-control"
+                                           required="required" placeholder="分类名称">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">
+                            取消
+                        </button>
+                        <button class="btn btn-success">
+                            保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+</script>
+{/block}

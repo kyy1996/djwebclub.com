@@ -1,0 +1,239 @@
+{extend name="layout"/}
+{block name="style"}
+{load href="__STATIC__/fancybox3/jquery.fancybox.css"/}
+{/block}
+{block name="body"}
+<section class="gallery-env">
+    <div class="row">
+        <div class="col-xs-12 gallery-right">
+            <!-- Album Header -->
+            <div class="album-header">
+                <!--<h2>General</h2>-->
+                <ul class="album-options list-unstyled list-inline pull-left">
+                    <li>
+                        <input type="checkbox" class="cbr" id="select-all"/>
+                        <label for="select-all">全选</label>
+                    </li>
+                    <li>
+                        <a href="#" data-action="upload" onclick="uploadPhoto()">
+                            <i class="fa-upload"></i>
+                            上传至云存储
+                        </a>
+                    </li>
+                    <!--<li>
+                        <a href="#" data-action="download">
+                            <i class="fa-download"></i>
+                            下载图片
+                        </a>
+                    </li>-->
+                </ul>
+            </div>
+            <div class="album-header">
+                <div class="row">
+                    <form action="{:url('user_photo/classPhoto')}" method="get" id="student-filter-form"
+                          enctype="multipart/form-data" class="form-horizontal clearfix">
+                        <div class="col-md-4">
+                            <div class="row">
+                                <label for="filter-grade-select" class="control-label col-xs-3">年级</label>
+                                <div class="col-xs-9">
+                                    <select name="filter[grade]" id="filter-grade-select" class="form-control">
+                                        <option value="">全部</option>
+                                        <option value="13">2013</option>
+                                        <option value="14">2014</option>
+                                        <option value="15">2015</option>
+                                        <option value="16">2016</option>
+                                        <option value="17">2017</option>
+                                        <option value="18">2018</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="row">
+                                <label for="filter-class-select" class="control-label col-xs-3">班级</label>
+                                <div class="col-xs-9">
+                                    <select name="filter[class]" id="filter-class-select" class="form-control">
+                                        <option value="">全部</option>
+                                        {volist name=":get_class_list()" id="class_name"}
+                                        <option value="{$key}">{$class_name}</option>
+                                        {/volist}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="row">
+                                <label for="filter-stu_no-input" class="control-label col-xs-3">学号</label>
+                                <div class="col-xs-9">
+                                    <div class="input-group">
+                                        <input name="filter[stu_no]" id="filter-stu_no-input" class="form-control"
+                                               value="{:input('filter/a')['stu_no']?:input('stu_no')}">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-success">搜索</button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <script>
+                    {
+                        let filter = {
+                            "stu_no": $("#filter-stu_no-input").val(),
+                            "grade": "",
+                            "class": ""
+                        };
+                        filter.grade = filter.stu_no.substr(0, 2);
+                        $("#filter-grade-select").val(filter.grade);
+                        filter.class = filter.stu_no.substr(2, 7);
+                        $("#filter-class-select").val(filter.class);
+                        $("#filter-grade-select,#filter-class-select").change(e => {
+                            let stu_no = "", grade = $("#filter-grade-select").val().toString() || "15",
+                                f_class = $("#filter-class-select").val().toString() || "1003500";
+                            stu_no += grade;
+                            stu_no += f_class;
+                            stu_no += "100";
+                            $("#filter-stu_no-input").val(stu_no);
+                        });
+                    }
+                </script>
+            </div>
+            <!-- Album Images -->
+            <div class="album-images">
+                <!-- Album Image -->
+                {volist name="_list" id="item"}
+                <div class="item" data-stu_no="{$item.stu_no}">
+                    <div class="album-image">
+                        <a href="{$item.photo_url}" onclick="selectPhoto(this)" class="thumb user-photo-a"
+                           data-caption="{$item.class}{$item.name}" data-type="image" data-fancybox="photo">
+                            <img src="{$item.photo_url}" class="img-responsive user-photo-item"
+                                 alt="{$item.class}{$item.name}"/>
+                        </a>
+                        <span href="#" class="name">
+                            <small class="text-muted"><a href="{:url('classPhoto',['stu_no'=>$item['stu_no']])}">{$item.stu_no}</a></small><br>
+                            <span>{$item.class}{$item.name}</span>
+                            <!--<em></em>-->
+                        </span>
+                        <div class="image-options">
+                            <a href="{$item.photo_url}" download="{$item.stu_no}.jpeg" type="image/jpeg"><i
+                                    class="fa-download"></i>下载</a>
+                        </div>
+                        <div class="image-checkbox">
+                            <input type="checkbox" class="cbr" name="ids" value="{$item.stu_no}" title="选择"/>
+                        </div>
+                    </div>
+                </div>
+                {/volist}
+            </div>
+        </div>
+        <div class="col-xs-12">
+        </div>
+    </div>
+</section>
+{/block}
+{block name="script"}
+{load href="http://gosspublic.alicdn.com/aliyun-oss-sdk-4.4.4.min.js"}
+{load href="__STATIC__/Common/js/OSSHelper.js"}
+<script>
+    /**
+     * 选中的id列表
+     **/
+    var ids = [];
+
+    /**
+     * 全选
+     */
+    $("#select-all").on('change', function (ev) {
+        var is_checked = $(this).is(':checked');
+        $(".album-image input[type='checkbox']").prop('checked', is_checked).trigger('change');
+    });
+
+    $(".album-image input[type='checkbox']").change(function () {
+        updateIds();
+    });
+
+    /**
+     * 选择一张图片
+     **/
+    function selectPhoto(element) {
+        $(element).siblings(".image-checkbox").children().click();
+    }
+
+    /**
+     * 计算ids列表
+     */
+    function updateIds() {
+        ids = [];
+        $(".album-image").find("input:checked").each(function (i, e) {
+            ids.push(e.value);
+        });
+    }
+
+    /**
+     * DataURL转Blob对象
+     **/
+    function dataURLtoBlob(dataurl) {
+        var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], {type: mime});
+    }
+
+    /**
+     * 批量上传图片
+     */
+    function uploadPhoto() {
+        if (!ids.length) {
+            helper.msg.error("至少选择一张图片");
+            return false;
+        }
+
+        var target = "photos/";
+
+        ids.forEach(function (stu_no) {
+            var img = $(".item[data-stu_no=" + stu_no + "]").find("img").get(0);
+            var canvas = document.createElement("canvas");
+            canvas.height = img.height;
+            canvas.width = img.width;
+            var ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, 1000, 1000);
+            ctx.drawImage(img, 0, 0);
+            var blob = canvas.toBlob(function (result) {
+                console.log(result);
+                console.log(blob);
+                /*OSSHelper.upload(blob, {
+                 target: target + stu_no + ".png",
+                 success: function (result) {
+                 console.log(result.url);
+                 }
+                 });*/
+            }, "image/jpeg");
+
+        });
+    }
+</script>
+{load href="__STATIC__/fancybox3/jquery.fancybox.min.js"/}
+<script>
+    //fancybox幻灯片插件
+    $("[data-fancybox]").fancybox({
+        // Animation duration in ms
+        buttons: [
+            'slideShow',
+            'fullScreen',
+            'thumbs',
+            'close'
+        ],
+        slideShow: {
+            autoStart: false,
+            speed: 4000
+        },
+        fullScreen: {
+            autoStart: false
+        },
+        type: "image"
+    });
+</script>
+{/block}

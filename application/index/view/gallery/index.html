@@ -1,0 +1,66 @@
+{extend name="layout"/}
+{block name="style"}
+<link rel="stylesheet" href="__STATIC__/fancybox/css/jquery.fancybox.css"/>
+{/block}
+{block name="body"}
+<!-- gallery -->
+<section class="well-11">
+    <!-- container -->
+    <div class="container">
+        <div class="gallery-grids-top">
+            {notempty name="_list"}
+            <div class="gallery-grids clearfix">
+                {volist name="_list" id="vo" mod="4"}
+                <div class="gallery-grid">
+                    <a class="js-lightbox-link" href="{$vo.url}" data-title="{$vo.title}"
+                       data-fancybox="gallery" data-caption="{$vo.class_name}"
+                       data-lightbox="{$vo.class_name}"><img class="js-lightbox-image" src="{$vo.thumbnail}"
+                                                             alt="{$vo.class_name}"/></a>
+                </div>
+                {/volist}
+            </div>
+            <div class="pagination-box text-center">
+                {$_list->render()}
+            </div>
+            {/notempty}
+        </div>
+    </div>
+    <!-- //container -->
+</section>
+<!-- //gallery -->
+{/block}
+{block name="script"}
+{load href="__STATIC__/fancybox/js/jquery.fancybox.min.js"/}
+{load href="__STATIC__/blocksit/blocksit.min.js"/}
+<script type="text/javascript">
+    $(window).bind("load", function () {
+        grid_resize();
+    }).resize(function () {
+        grid_resize();
+    });
+
+    function grid_resize() {
+        var grid_col = 4;
+        var window_width = document.body.clientWidth;
+        if (window_width < 991) grid_col = 3;
+        if (window_width < 768) grid_col = 2;
+        if (window_width < 540) grid_col = 1;
+        $('.gallery-grids').BlocksIt({
+            numOfCol: grid_col,
+            offsetX: 10,
+            offsetY: 10
+        });
+    }
+
+    //fancybox幻灯片插件
+    $("[data-fancybox]").fancybox({
+        // Animation duration in ms
+        speed: 200,
+        buttons: true,
+        slideShow: true,
+        fullScreen: true,
+        thumbs: true,
+        closeBtn: true
+    });
+</script>
+{/block}

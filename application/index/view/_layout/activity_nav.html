@@ -1,0 +1,108 @@
+<div class="filter">
+    <div class="col-md-2">
+        <h3>类型</h3>
+    </div>
+    <div class="col-md-10">
+        <ul>
+            {if condition="!input('type')"}
+            <li class="active"><a href="{:url('index', array_diff_key(input('param.'), ['type'=>'']))}">所有</a></li>
+            {else/}
+            <li><a href="{:url('index', array_diff_key(input('param.'), ['type'=>'']))}">所有</a></li>
+            {/if}
+            {notempty name="_category_list"}
+            {volist name="_category_list" id="vo"}
+            {if condition="$vo['type'] eq input('type') && $vo['type']"}
+            <li class="active">
+                <a href="{:url('index', array_merge(input('param.'),['type'=>$vo['type']]))}">{$vo.type}({$vo.count})</a>
+            </li>
+            {else/}
+            <li>
+                <a href="{:url('index', array_merge(input('param.'),['type'=>$vo['type']]))}">{$vo.type}({$vo.count})</a>
+            </li>
+            {/if}
+            {/volist}
+            {/notempty}
+        </ul>
+    </div>
+</div>
+<div class="filter">
+    <div class="col-md-2">
+        <h3>时间</h3>
+    </div>
+    <div class="col-md-10">
+        <ul class="marked-list offs1">
+            {if condition="!input('time')"}
+            <li class="active"><a href="{:url('index', array_diff_key(input('param.'), ['time'=>'']))}">所有</a></li>
+            {else/}
+            <li><a href="{:url('index', array_diff_key(input('param.'), ['time'=>'']))}">所有</a></li>
+            {/if}
+            {notempty name="_time_list"}
+            {volist name="_time_list" id="vo"}
+            {if condition="$vo['time'] eq input('time') && $vo['time']"}
+            <li class="active">
+                <a href="{:url('index', array_merge(input('param.'),['time'=>$vo['time']]))}">{$vo.time}({$vo.count})</a>
+            </li>
+            {else/}
+            <li>
+                <a href="{:url('index', array_merge(input('param.'),['time'=>$vo['time']]))}">{$vo.time}({$vo.count})</a>
+            </li>
+            {/if}
+            {/volist}
+            {/notempty}
+        </ul>
+    </div>
+</div>
+<div class="filter">
+    <div class="col-md-2">
+        <h3>地点</h3>
+    </div>
+    <div class="col-md-10">
+        <ul class="marked-list offs1">
+            {if condition="!input('location')"}
+            <li class="active"><a href="{:url('index', array_diff_key(input('param.'), ['location'=>'']))}">所有</a></li>
+            {else/}
+            <li><a href="{:url('index', array_diff_key(input('param.'), ['location'=>'']))}">所有</a></li>
+            {/if}
+            {notempty name="_location_list"}
+            {volist name="_location_list" id="vo"}
+            {if condition="$vo['location'] eq input('location') && $vo['location']"}
+            <li class="active">
+                <a href="{:url('index', array_merge(input('param.'),['location'=>$vo['location']]))}">{$vo.location}({$vo.count})</a>
+            </li>
+            {else/}
+            <li>
+                <a href="{:url('index', array_merge(input('param.'),['location'=>$vo['location']]))}">{$vo.location}({$vo.count})</a>
+            </li>
+            {/if}
+            {/volist}
+            {/notempty}
+        </ul>
+    </div>
+</div>
+<div class="filter">
+    <div class="col-md-2">
+        <h3>主讲</h3>
+    </div>
+    <div class="col-md-10">
+        <ul class="marked-list offs1">
+            {if condition="!input('host')"}
+            <li class="active"><a href="{:url('index', array_diff_key(input('param.'), ['host'=>'']))}">所有</a></li>
+            {else/}
+            <li><a href="{:url('index', array_diff_key(input('param.'), ['host'=>'']))}">所有</a></li>
+            {/if}
+            {notempty name="_host_list"}
+            {volist name="_host_list" id="vo"}
+            {if condition="$vo['host'] eq input('host') && $vo['host']"}
+            <li class="active">
+                <a href="{:url('index', array_merge(input('param.'),['host'=>$vo['host']]))}">{$vo.host}({$vo.count})</a>
+            </li>
+            {else/}
+            <li>
+                <a href="{:url('index', array_merge(input('param.'),['host'=>$vo['host']]))}">{$vo.host}({$vo.count})</a>
+            </li>
+            {/if}
+            {/volist}
+            {/notempty}
+        </ul>
+    </div>
+</div>

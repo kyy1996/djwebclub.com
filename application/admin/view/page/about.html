@@ -1,0 +1,182 @@
+{extend name="layout"/}
+{block name="body"}
+<form class="form-horizontal" method="post" id="index-form" onsubmit="helper.form.submit()"
+      action="{:url('updateAbout')}">
+    <section class="panel panel-default">
+        <div class="panel-body">
+            <h2 class="text-center">
+                顶部设置
+            </h2>
+            <div class="form-group">
+                <div class="col-xs-12 col-md-6">
+                    <figure class="img-uploader-wrapper" style="width: 100%;">
+                        <img src="{$_info.history_img}" class="history_img" alt="" width="200"
+                             onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAYAAAD0In+KAAAAC0lEQVQYV2NkgAIAABIAAibpyBYAAAAASUVORK5CYII='">
+                        <input type="file" data-name="history_img" class="form-control img-file-input uploader-file"
+                               data-title="顶部图片" onchange="helper.imageInputChange()">
+                        <input type="hidden" name="history_img" value="{$_info.history_img}">
+                    </figure>
+                </div>
+                <div class="col-xs-12 col-md-6">
+                    <div class="form-group">
+                        <div class="col-xs-12">
+                            <input class="form-control" name="history_title" placeholder="顶部标题" type="text"
+                                   value="{$_info.history_title}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-12">
+                            <input class="form-control" name="history_subtitle" placeholder="顶部副标题" type="text"
+                                   value="{$_info.history_subtitle}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-12">
+                            <textarea class="form-control" name="history_content" placeholder="顶部内容" rows="10">{$_info.history_content}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="panel panel-default">
+        <div class="panel-body">
+            <h2 class="text-center">
+                我们的团队
+            </h2>
+            <div class="form-group" id="team-wrapper">
+                {volist name="_info.team_list" id="vo"}
+                <div class="col-md-4 item">
+                    <div class="media">
+                        <div class="media-left pull-left">
+                            <figure class="img-uploader-wrapper media-object img-circle"
+                                    style="width: 128px;height: 128px;overflow: hidden;">
+                                <img src="{$vo.photo|default='__IMG__/user-2.png'}" class="photo" alt=""
+                                     width="200"
+                                     onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAYAAAD0In+KAAAAC0lEQVQYV2NkgAIAABIAAibpyBYAAAAASUVORK5CYII='">
+                                <input type="file" data-name="team[photo][]"
+                                       class="form-control img-file-input uploader-file" data-title="图片"
+                                       onchange="helper.imageInputChange();OSSHelper.uploadHandler(event)">
+                                <input type="hidden" name="team[photo][]" value="{$vo.photo}">
+                            </figure>
+                            <div class="text-center media-info">
+                                <input type="text" name="team[name][]" placeholder="成员名称" value="{$vo.name}"
+                                       required="required" class="form-control">
+                            </div>
+                        </div>
+                        <div class="media-body">
+                            <textarea name="team[brief][]" rows="5" placeholder="成员介绍"
+                                      class="form-control">{$vo.brief}</textarea>
+                            <input type="text" name="team[more][]" value="{$vo.more}" class="form-control"
+                                   placeholder="更多页面地址">
+                        </div>
+                        <div class="media-right pull-right">
+                            <button type="button" class="btn btn-danger" onclick="delItem()">删除
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {/volist}
+            </div>
+            <div class="form-group">
+                <div class="col-xs-12">
+                    <button type="button" class="btn btn-block btn-lg btn-gray" onclick="add('team')">添加
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="panel panel-default">
+        <div class="panel-body">
+            <h2 class="text-center">
+                我们的优势
+            </h2>
+            <div class="form-group" id="advance-wrapper">
+                {volist name="_info.advance_list" id="vo"}
+                <div class="col-md-4 text-center item">
+                    <input type="text" name="advance[title][]" class="form-control" placeholder="名称" required="required"
+                           value="{$vo.title}">
+                    <textarea name="advance[content][]" rows="5" placeholder="介绍"
+                              class="form-control">{$vo.content}</textarea>
+                    <input type="text" name="advance[more][]" class="form-control" placeholder="更多页面地址"
+                           value="{$vo.more}">
+                    <div class="btn-group">
+                        <button class="btn btn-danger" type="button" onclick="delItem()">
+                            删除
+                        </button>
+                    </div>
+                </div>
+                {/volist}
+            </div>
+            <div class="form-group">
+                <div class="col-xs-12">
+                    <button type="button" class="btn btn-block btn-lg btn-gray" onclick="add('advance')">添加
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <button class="btn btn-success">保存</button>
+</form>
+{/block}
+{block name="script"}
+<script type="text/html" id="advance-tpl">
+    <div class="col-md-4 text-center item">
+        <input type="text" name="advance[title][]" class="form-control" placeholder="名称" required="required"
+               value="">
+        <textarea name="advance[content][]" rows="5" placeholder="介绍"
+                  class="form-control"></textarea>
+        <input type="text" name="advance[more][]" class="form-control" placeholder="更多页面地址"
+               value="">
+        <div class="btn-group">
+            <button class="btn btn-danger" type="button" onclick="delItem()">
+                删除
+            </button>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="team-tpl">
+    <div class="col-md-4 item">
+        <div class="media">
+            <div class="media-left pull-left">
+                <figure class="img-uploader-wrapper media-object img-circle"
+                        style="width: 128px;height: 128px;overflow: hidden;">
+                    <img src="__IMG__/user-4.png" class="team[photo][]" alt=""
+                         width="200"
+                         onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAYAAAD0In+KAAAAC0lEQVQYV2NkgAIAABIAAibpyBYAAAAASUVORK5CYII='">
+                    <input type="file" data-name="team[photo][]"
+                           class="form-control img-file-input uploader-file"
+                           data-title="顶部图片" onchange="helper.imageInputChange();OSSHelper.uploadHandler(event)">
+                    <input type="hidden" name="team[photo][]" value="">
+                </figure>
+                <div class="text-center media-info">
+                    <input type="text" name="team[name][]" placeholder="成员名称" value="" required="required"
+                           class="form-control">
+                </div>
+            </div>
+            <div class="media-body">
+                <textarea name="team[brief][]" rows="5" placeholder="成员介绍" class="form-control"></textarea>
+                <input type="text" name="team[more][]" value="" class="form-control"
+                       placeholder="更多页面地址">
+            </div>
+            <div class="media-right pull-right">
+                <button type="button" class="btn btn-danger" onclick="delItem()">删除
+                </button>
+            </div>
+        </div>
+    </div>
+</script>
+{load href="http://gosspublic.alicdn.com/aliyun-oss-sdk-4.4.4.min.js"}
+{load href="__STATIC__/Common/js/OSSHelper.js"}
+<script>
+    function add(name) {
+        var $target = $("#" + name + "-wrapper");
+        var tpl = $("#" + name + "-tpl").html();
+        $(tpl).appendTo($target);
+    }
+
+    function delItem() {
+        helper.remove($(event.target).closest(".item"));
+    }
+</script>
+{/block}

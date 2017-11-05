@@ -1,0 +1,62 @@
+{extend name="layout"}
+{block name="body"}
+<div class="login-container">
+    <div class="row">
+        <div class="col-sm-6">
+            <!-- Errors container -->
+            <div class="errors-container">
+                {notempty name="_error"}
+                <div class="alert alert-danger">{$_error}</div>
+                {/notempty}
+            </div>
+            <!-- Add class "fade-in-effect" for login form effect -->
+            <form method="post" action="{:url('login')}" role="form" id="login" class="login-form fade-in-effect"
+                  autocomplete="off">
+                <input type="hidden" name="callback" value="{$Request.param.callback}">
+                <div class="login-header">
+                    <a href="{:url('index/index/index')}" class="logo" target="_blank">
+                        <img src="__IMG__/logo-color.png" alt="" width="100"/>
+                    </a>
+                    <h3 class="text-muted">{$Think.config.website_name}</h3>
+                    <p>统一OAuth2.0认证平台</p>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="username">E-Mail/UID/手机号</label>
+                    <input type="text" class="form-control input-dark" name="username" id="username" required="required"
+                           autocomplete="off"/>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="password">密码</label>
+                    <input type="password" class="form-control input-dark" name="password" id="password"
+                           required="required" autocomplete="off"/>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-dark btn-block text-left">
+                        <i class="fa-lock"></i>
+                        登录
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    jQuery(document).ready(function ($) {
+        $(".fade-in-effect").addClass('in');
+
+        $("form#login").validate({
+            messages: {
+                username: {
+                    required: '请输入用户名'
+                },
+                password: {
+                    required: '请输入密码'
+                }
+            }
+        });
+        $("form#login .form-group:has(.form-control):first .form-control").focus();
+    });
+</script>
+{/block}

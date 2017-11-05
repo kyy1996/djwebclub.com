@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>
+        {block name="title"}{:get_action_name(request()->action())} -
+        {:get_action_name(request()->controller())}{/block} - {$_common.website_title}
+    </title>
+    {volist name="_seo" id="vo"}
+    <meta name="{$key}" content="{$vo}"/>
+    {/volist}
+    <!-- bootstrap-css -->
+    {load href="__STATIC__/bootstrap4/css/bootstrap.css"/}
+    {load href="__STATIC__/bootstrap4/css/glyphicon.css"/}
+    <!-- //bootstrap-css -->
+    <!-- css -->
+    {load href="__CSS__/style.css"/}
+    <link rel="shortcut icon" type="image/x-icon" href="__IMG__/favicon.ico">
+    {block name="style"}{/block}
+    <!-- //css -->
+    {load href="__STATIC__/jquery/jquery-3.2.1.min.js"/}
+    {load href="__STATIC__/bootstrap4/js/bootstrap.min.js"/}
+    <!--pop-up-->
+    {load href="__JS__/menu_jquery.js"/}
+    <!--//pop-up-->
+    <!-- Piwik -->
+    <script type="text/javascript">
+        var _paq = _paq || [];
+        /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+        _paq.push(['trackPageView']);
+        _paq.push(['enableLinkTracking']);
+        (function () {
+            var u = "//piwik.kyy1996.com/";
+            _paq.push(['setTrackerUrl', u + 'piwik.php']);
+            _paq.push(['setSiteId', '1']);
+            var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+            g.type = 'text/javascript';
+            g.async = true;
+            g.defer = true;
+            g.src = u + 'piwik.js';
+            s.parentNode.insertBefore(g, s);
+        })();
+    </script>
+    <!-- End Piwik Code -->
+</head>
+<body>
+{block name="header"}
+<!-- header-top -->
+<div class="header-top">
+    <!-- container -->
+    <div class="container">
+        <div class="social">
+            <ul>
+                {notempty name="_common.qq"}
+                <li>
+                    <a href="tencent://Message/?Uin={$_common.qq}&websiteName={$_common.website_title}&Menu=yes"
+                       class="qq"> </a>
+                </li>
+                {/notempty}
+                <li>
+                    <a target="_blank" class="qun" title="网页客研究会 2015"
+                       href="http://shang.qq.com/wpa/qunwpa?idkey=bf6e0debf5a1e06ef856b2cd717d8658477d2fb63fab7dd5dff98fc4d7a5787b">
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="details">
+            <ul>
+                {notempty name="_common.website_email"}
+                <li><a href="mailto:{$_common.website_email}"><span class="glyphicon glyphicon-envelope"
+                                                                    aria-hidden="true"></span>{$_common.website_email}</a>
+                </li>
+                {/notempty}
+                {notempty name="_common.website_mobile"}
+                <li>
+                    {$_common.website_mobile}
+                </li>
+                {/notempty}
+            </ul>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <!-- //container -->
+</div>
+<!-- //header-top -->
+<!-- header -->
+<div class="header">
+    <!-- container -->
+    <div class="container">
+        <div class="header-bottom">
+            <div class="logo">
+                <h1><a href="{:url('index/index')}">{$_common.website_title}</a></h1>
+            </div>
+            <!--<div class="header-top-right">
+                <form>
+                    <input type="text" placeholder="搜索" required="">
+                    <input type="submit" value="">
+
+                    <div class="clearfix"></div>
+                </form>
+            </div>-->
+            <div class="clearfix"></div>
+        </div>
+        <div class="top-nav">
+            {include file="_layout/navbar"/}
+        </div>
+    </div>
+    <!-- //container -->
+</div>
+<!-- //header -->
+{/block}
+{block name="body"}{/block}
+<!-- footer -->
+{block name="footer"}
+{include file="_layout/footer"/}
+{/block}
+<!-- //footer -->
+<!-- content-Get-in-touch -->
+{load href="__STATIC__/jquery-easing/jquery.easing.js"/}
+{load href="__STATIC__/layer/layer.js"/}
+{load href="__JS__/move-top.js"/}
+{load href="__JS__/common.js"/}
+<script>
+    // 百度链接主动推送
+    (function (window, document) {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })(window, document);
+</script>
+<script type="text/javascript">
+    var loginUrl = "{:url('user/login')}";
+    $("img[data-default]").one("error", function () {
+        $(this).attr("src", $(this).attr("data-default"));
+    });
+    (function ($) {
+        $(function () {
+            /*var defaults = {
+                containerID: 'toTop', // fading element id
+                containerHoverID: 'toTopHover', // fading element hover id
+                scrollSpeed: 1200,
+                easingType: 'linear'
+            };*/
+            $().UItoTop({easingType: 'easeOutQuart'});
+
+
+            $("#subscribe-form").submit(function (e) {
+                var data = $(this).serialize();
+                $.post(e.target.action, data, function (data) {
+                    if (data.code) layer.msg(data.msg);
+                    else layer.msg(data.msg, {shift: 6});
+                }, "json");
+            });
+        });
+    })(jQuery);
+</script>
+{block name="script"}{/block}
+</body>
+</html>

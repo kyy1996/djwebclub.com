@@ -1,0 +1,167 @@
+{extend name="layout"/}
+{block name="style"}
+{load href="__CSS__/camera.min.css"}
+{/block}
+{block name="body"}
+<section>
+    <div class="camera_container">
+        <div id="camera" class="camera_wrap">
+            {notempty name="_banner_list"}
+            {volist name="_banner_list" id="vo" key="key"}
+            <div data-src="__IMG__/page-1_slide0{$key}.jpg">
+                <div class="camera_caption fadeIn">
+                    <h2>{$vo.title}</h2>
+                    <h4>{$vo.subtitle}</h4>
+                    <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+                        <p>{$vo.content|nl2br}</p>
+                    </div>
+                </div>
+            </div>
+            {/volist}
+            {/notempty}
+        </div>
+    </div>
+</section>
+<section class="well bg2">
+    <div class="container">
+        <div class="bg off2">
+            <div class="cnt">
+                <h4 class="wow fadeIn" data-wow-delay=".2s"><span>{$_common.welcome_title}</span></h4>
+                <h6 class="wow fadeIn" data-wow-delay=".4s">{$_common.welcome_subtitle}</h6>
+                <p class="wow fadeIn" data-wow-delay=".6s">{$_common.welcome_text}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="parallax parallax1" data-parallax-speed="-0.1">
+        <div class="container">
+            <div class="cnt2">
+                <div class="cnt2_left">
+                    <h3 class="wow fadeInLeft" data-wow-delay=".3s">加入我们</h3>
+                    <p class="wow fadeInLeft" data-wow-delay=".7s">与我们一起探索网站技术</p>
+                </div>
+
+                <div class="cnt2_right">
+                    <a class="wow fadeInRight btn btn-icon" href="{:url('user/index')}"><span class="btn_icon"></span>
+                        加入社团</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--<section class="well-2">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4 m-t-md">
+                <h4 class="title wow fadeInRight" data-wow-delay=".8s">Guide</h4>
+                <p class="sub-title wow fadeInRight" data-wow-delay=".8s">to Surfing</p>
+                <div class="box wow fadeInLeft" data-wow-delay=".8s">
+                    <img src="__IMG__/page-1_img04.jpg" alt="">
+                    <h6>Lorem ipsum dolor adipisc.</h6>
+                    <p>Tincidunt dolor nunc vule putate ulr ips dol consec. Donec semp ertet laciniate ultricie
+                        upien disse come lectus fgilla. Sollicil tudin dolor necamet quam accumsan.</p>
+                    <a class="btn2" href="{:url('index/index')}#"><span
+                            class="btn2_icon fa fa-file-text-o"></span>More
+                        info</a>
+                </div>
+            </div>
+            <div class="col-sm-4 m-t-md">
+                <h4 class="title wow fadeInRight" data-wow-delay=".4s">Club</h4>
+                <p class="sub-title wow fadeInRight" data-wow-delay=".4s">events</p>
+                <div class="box wow fadeInLeft" data-wow-delay=".4s">
+                    <img src="__IMG__/page-1_img05.jpg" alt="">
+                    <h6>Lorem ipsum dolor adipisc.</h6>
+                    <p>Tincidunt dolor nunc vule putate ulr ips dol consec. Donec semp ertet laciniate ultricie
+                        upien disse come lectus fgilla. Sollicil tudin dolor necamet quam accumsan.</p>
+                    <a class="btn2" href="{:url('index/index')}#"><span
+                            class="btn2_icon fa fa-file-text-o"></span>More
+                        info</a>
+                </div>
+            </div>
+            <div class="col-sm-4 m-t-md">
+                <h4 class="title wow fadeInRight" data-wow-delay=".2s">Surfing</h4>
+                <p class="sub-title wow fadeInRight" data-wow-delay=".2s">school</p>
+                <div class="box wow fadeInLeft" data-wow-delay=".2s">
+                    <img src="__IMG__/page-1_img06.jpg" alt="">
+                    <h6>Lorem ipsum dolor adipisc.</h6>
+                    <p>Tincidunt dolor nunc vule putate ulr ips dol consec. Donec semp ertet laciniate ultricie
+                        upien disse come lectus fgilla. Sollicil tudin dolor necamet quam accumsan.</p>
+                    <a class="btn2" href="{:url('index/index')}#"><span
+                            class="btn2_icon fa fa-file-text-o"></span>More
+                        info</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>-->
+<section class="well-3 cnt3">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h5 class="prim-col wow fadeInLeft" data-wow-delay=".4s">最近文章</h5>
+                <div class="box-3 wow fadeInUp" data-wow-delay=".5s">
+                    <div class="row">
+                        {volist name="_blog_list" id="vo" offset="0" length="4"}
+                        <div class="col-xs-12 col-md-6 m-b-md">
+                            <div class="row">
+                                <div class="col-xs-3 col-md-4 col-lg-3">
+                                    <time datetime="2014-12-01" class="date">
+                                        <span class="date_day">{$vo.create_time|strtotime|date='d',###}</span>
+                                        <span class="date_month">{$vo.create_time|strtotime|date='m',###|get_month}</span>
+                                        <span class="date_year">{$vo.create_time|strtotime|date='Y',###}</span>
+                                    </time>
+                                </div>
+                                <div class="col-xs-9 col-md-8 col-lg-9">
+                                    <a href="{:url('BlogRead?id='.$vo['id'])}">
+                                        <div class="box-3_cnt">
+                                            <h6>{$vo.title}</h6>
+                                            <p>
+                                                {$vo.brief}</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {/volist}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="well-3 bg3 cnt3">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-md-6">
+                <h5 class="wow fadeInLeft" data-wow-delay=".2s">我们的故事</h5>
+                <div class="box-2 wow fadeInUp" data-wow-delay=".3s">
+                    <div class="box-2_aside">
+                        <img src="__IMG__/logo-color.png" alt="" width="150"/>
+                        <!--<img src="{$_history.history_img}" alt=""/>-->
+                    </div>
+                    <div class="box-2_cnt">
+                        <p class="who">{$_history.history_title}</p>
+                        <h6>{$_history.history_subtitle}</h6>
+                        <p>{$_history.history_content}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <h5 class="wow fadeInLeft" data-wow-delay=".7s">活动安排表</h5>
+                <ul class="list wow fadeInUp" data-wow-delay=".8s">
+                    {volist name="_activities_list" id="day"}
+                    <li>{$key} - <span>{volist name="day" id="item_list"}{$key}: <strong>{volist name="item_list" id="item"}{$item.name}</strong>&nbsp;@&nbsp;{$item.location}{/volist}{/volist}</span>
+                    </li>
+                    {/volist}
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+{/block}
+{block name="script"}
+<script>
+</script>
+{/block}

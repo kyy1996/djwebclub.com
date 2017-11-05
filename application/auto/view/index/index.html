@@ -1,0 +1,21 @@
+{extend name="layout"/}
+{block name="body"}
+<div class="row">
+    {volist name="_databases" id="database"}
+    <div class="col-md-4">
+        <a href="{:url('database?name='.$database['database'])}" class="xe-widget xe-counter" data-count=".count"
+           data-from="0" data-to="{$database.count}"
+           data-suffix="张表"
+           data-duration="2">
+            <div class="xe-icon">
+                <i class="fa-database"></i>
+            </div>
+            <div class="xe-label">
+                <strong class="num">{$database.database}</strong>
+                <span class="count"></span>
+            </div>
+        </a>
+    </div>
+    {/volist}
+</div>
+{/block}

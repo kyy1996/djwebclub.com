@@ -1,0 +1,147 @@
+{extend name="layout"/}
+{block name="style"}
+{load href="__CSS__/google-map.css"}
+{/block}
+{block name="body"}
+<!-- about -->
+<section class="well-7 about ta-c">
+    <!-- container -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 m-b-md wow fadeInUp" data-wow-delay=".5s">
+                <img src="{$_info.history_img}" alt=""/>
+            </div>
+            <div class="col-md-6 wow fadeInUp">
+                <div class="cnt5">
+                    <h5 class="wow fadeInUp m-b-md title" data-wow-delay=".3s">{$_info.history_title}</h5>
+                    <p class="wow fadeInUp" data-wow-delay=".3s">{$_info.history_subtitle}</p>
+                    <p class="wow fadeInUp" data-wow-delay=".5s">{$_info.history_content}</p>
+                    <!--<a class="btn2" href="index-1.html#"><span class="btn2_icon fa fa-file-text-o"></span>more
+                        info</a>-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- container -->
+</section>
+<!-- about-bottom -->
+<!-- about-team -->
+<section class="well-7 cnt-title ta-c bg2">
+    <div class="container">
+        <h4 class="title wow fadeInRight" data-wow-delay=".3s">{$_info.team_title}</h4>
+        <p class="sub-title wow fadeInRight" data-wow-delay=".5s"></p>
+        <div class="row">
+            {volist name="_info.team_list" id="vo"}
+            <div class="col-md-4 wow fadeInLeft" data-wow-delay=".3s">
+                <div class="box-4 text-center">
+                    <img src="__IMG__/user.jpg" data-default="__IMG__/user.jpg" alt="">
+                    <div class="box-4_cnt">
+                        <h6>{$vo.name}</h6>
+                        <p>{$vo.brief}</p>
+                    </div>
+                </div>
+            </div>
+            {/volist}
+        </div>
+    </div>
+</section>
+<!-- choose -->
+<div class="parallax parallax2" data-parallax-speed="-0.2">
+    <div class="well-2 cnt6 choose">
+        <!-- container -->
+        <div class="container">
+            <h4 class="title m-b-lg wow fadeInLeft" data-wow-delay="0.3s">{$_info.advance_title}</h4>
+            <p class="sub-title wow fadeInRight" data-wow-delay=".5s"></p>
+            <div class="choose-grids clearfix text-center">
+                {notempty name="_info.advance_list"}
+                {volist name="_info.advance_list" id="vo"}
+                <div class="col-md-4 choose-grid wow fadeInBottom" data-wow-delay=".7s">
+                    <h5>{$vo.title}</h5>
+
+                    <p style="word-break: break-all;">{$vo.content}</p>
+                    {notempty name="vo.more"}
+                    <div class="choose-button">
+                        <a href="{$vo.more}">更多</a>
+                    </div>
+                    {/notempty}
+                </div>
+                {/volist}
+                {else/}
+                <h4 class="text-center">
+                    暂时还没有信息
+                </h4>
+                {/notempty}
+            </div>
+        </div>
+        <!-- //container -->
+    </div>
+</div>
+<!-- //choose -->
+<!--联系我们-->
+<section class="well-9">
+    <div class="container">
+        <h4 class="title" data-wow-delay="0.3s">联系我们</h4>
+    </div>
+</section>
+<section class="map">
+    <div id="baidu-map" class="map_model"></div>
+</section>
+<section class="well-11">
+    <div class="cnt8">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h6>{$_contact.left_title}</h6>
+                    <p class="mail">
+                        {$_contact.left_text|nl2br}
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <h6>{$_contact.mid_title}</h6>
+                    <p class="mail">
+                        {$_contact.mid_text|nl2br}
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <h6>{$_contact.right_title}</h6>
+                    <p class="mail">
+                        {$_contact.right_text|nl2br}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- 加入我们 -->
+<div class="well-7 cnt-title choose">
+    <!-- container -->
+    <div class="container">
+        <h4 class="title wow fadeInLeft" data-wow-delay="0.3s">加入我们</h4>
+        <p class="sub-title wow fadeInRight" data-wow-delay=".5s"></p>
+        <div class="clearfix text-center qrcode wow fadeInRight col-md-4 col-md-push-4 col-xs-8 col-xs-push-2"
+             data-wow-delay=".7s">
+            <img src="__IMG__/qrcode.png" alt="社团QQ群二维码">
+        </div>
+    </div>
+    <!-- //container -->
+</div>
+{/block}
+{block name="script"}
+<script src="//api.map.baidu.com/api?v=2.0&ak=fhtC3cv1ydlD3b5vgPMvtngb"></script>
+<script type="text/javascript">
+    // 百度地图API功能
+    var map = new BMap.Map("baidu-map", {minZoom: 14, maxZoom: 16});
+    map.disableDragging();
+    // 创建地址解析器实例
+    var myGeo = new BMap.Geocoder();
+    // 将地址解析结果显示在地图上,并调整地图视野
+    myGeo.getPoint("{$_contact.map_address}", function (point) {
+        if (point) {
+            $(window).resize(function () {
+                map.centerAndZoom(point, 16);
+            }).resize();
+            map.addOverlay(new BMap.Marker(point));
+        }
+    }, "上海市");
+</script>
+{/block}

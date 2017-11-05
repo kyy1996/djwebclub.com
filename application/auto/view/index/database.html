@@ -1,0 +1,28 @@
+{extend name="layout"/}
+{block name="body"}
+<div class="row">
+    {volist name="_tables" id="table"}
+    <div class="col-md-4">
+        <a href="{:url('table?table='.$table['name'].'&database='.input('name'))}">
+            <div class="xe-widget xe-counter-block">
+                <div class="xe-upper">
+                    <div class="xe-icon">
+                        <i class="fa-table"></i>
+                    </div>
+                    <div class="xe-label">
+                        <strong class="num">{$table.name}</strong>
+                        <span>{$table.comment}</span>
+                    </div>
+
+                </div>
+                <div class="xe-lower">
+                    <div class="border"></div>
+                    <span>{$table.database}</span>
+                    <strong>{$table.engine}</strong>
+                </div>
+            </div>
+        </a>
+    </div>
+    {/volist}
+</div>
+{/block}

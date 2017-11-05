@@ -1,0 +1,71 @@
+<nav class="navbar user-info-navbar" role="navigation">
+    <!-- Left links for user info navbar -->
+    <ul class="user-info-menu left-links list-inline list-unstyled">
+        <li class="hidden-sm hidden-xs">
+            <a href="#" data-toggle="sidebar">
+                <i class="fa-bars"></i>
+            </a>
+        </li>
+        <li class="hidden-sm hidden-xs">
+            <a href="javascript:history.back()">
+                <i class="fa-chevron-left"></i>
+            </a>
+        </li>
+        <li class="hidden-sm hidden-xs">
+            <a href="{:url('index/index/index')}" target="_blank">
+                <i class="fa-home"></i>
+            </a>
+        </li>
+    </ul>
+    <!-- Right links for user info navbar -->
+    <ul class="user-info-menu right-links list-inline list-unstyled">
+        <li class="search-form">
+            <!-- You can add "always-visible" to show make the search input visible -->
+            <form method="get" action="">
+                <input type="text" name="s" class="form-control search-field" placeholder="输入搜索关键字"/>
+                <button class="btn btn-link">
+                    <i class="linecons-search"></i>
+                </button>
+            </form>
+        </li>
+        <li class="dropdown user-profile">
+            <a href="#" data-toggle="dropdown">
+                <img src="{$__user.avatar}" onerror="this.src='__IMG__/user-4.png'" alt="user-image"
+                     class="img-circle img-inline userpic-32" width="28" height="28"/>
+                <span>{$__user.email}<i class="fa-angle-down"></i></span>
+            </a>
+            <ul class="dropdown-menu user-profile-menu list-unstyled">
+                <li>
+                    <a href="{:url('common/index')}">
+                        <i class="fa-wrench"></i>
+                        系统设置
+                    </a>
+                </li>
+                <li>
+                    <a href="{:url('admin/index/index')}">
+                        <i class="fa-dashboard"></i>
+                        后台管理
+                    </a>
+                </li>
+                <li>
+                    <a href="{:url('auto/index/index')}">
+                        <i class="fa-cogs"></i>
+                        自动代码生成系统
+                    </a>
+                </li>
+                <li>
+                    <a href="#profile">
+                        <i class="fa-user"></i>
+                        个人资料
+                    </a>
+                </li>
+                <li class="last">
+                    <a href="{:url('user/logout')}">
+                        <i class="fa-lock"></i>
+                        注销
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</nav>
