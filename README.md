@@ -9,6 +9,10 @@
 
 之后运行 `composer install`
 
+别忘了导入SQL数据库 `database/dump/webmaster.sql`
+
+最后记得修改配置文件中的数据库信息 `application/database.php`
+
 ## 目录结构
 
 初始的目录结构如下：
