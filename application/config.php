@@ -243,8 +243,8 @@ return [
     //阿里云OSS配置
 
     'aliyun_oss' => [
-        'access_id'  => 'LTAIsXiEpT15982I',
-        'access_key' => 'KiRnHcs93iLxErxqvqma6UcmW9xYMH',
+        'access_id'  => '',
+        'access_key' => '',
         'endpoint'   => 'cdn.djwebclub.com',
         'cname'      => true,
         'bucket'     => "djwebmaster",
